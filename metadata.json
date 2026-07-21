@@ -1,0 +1,6 @@
+{
+  "name": "Staffing and Recruitment Agency",
+  "description": "A premium, sophisticated staffing and recruitment agency website featuring advanced AI candidate matching and talent pipeline generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
