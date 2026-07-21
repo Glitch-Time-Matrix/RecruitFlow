@@ -19,20 +19,6 @@ export default function ActivePositions({ jobs, onSelectJobForMatching }: Active
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    gsap.from(".job-card", {
-      opacity: 0,
-      y: 24,
-      duration: 0.5,
-      stagger: 0.08,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: ".job-grid",
-        start: "top 85%"
-      }
-    });
-  }, { scope: containerRef });
-
   // Departments list for filter dropdown
   const DEPARTMENTS = ["All", "Engineering", "Creative & Design", "Executive & Creative", "Executive & Engineering", "Marketing"];
   const TYPES = ["All", "Full-Time", "Contract-to-Hire"];
@@ -48,6 +34,23 @@ export default function ActivePositions({ jobs, onSelectJobForMatching }: Active
 
     return matchesSearch && matchesDept && matchesType;
   });
+
+  useGSAP(() => {
+    gsap.fromTo(".job-card", 
+      { opacity: 0, y: 24 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        stagger: 0.08,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".job-grid",
+          start: "top 85%"
+        }
+      }
+    );
+  }, { scope: containerRef, dependencies: [filteredJobs] });
 
   const toggleExpandJob = (jobId: string) => {
     if (expandedJobId === jobId) {

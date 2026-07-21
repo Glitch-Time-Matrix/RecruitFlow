@@ -12,30 +12,36 @@ export default function SocialProof() {
 
   useGSAP(() => {
     // Header reveal
-    gsap.from(".sp-header > *", {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      stagger: 0.1,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: ".sp-header",
-        start: "top 85%"
+    gsap.fromTo(".sp-header > *", 
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".sp-header",
+          start: "top 85%"
+        }
       }
-    });
+    );
 
     // Testimonials reveal
-    gsap.from(".sp-card", {
-      opacity: 0,
-      y: 30,
-      duration: 0.6,
-      stagger: 0.15,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: ".sp-grid",
-        start: "top 85%"
+    gsap.fromTo(".sp-card", 
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".sp-grid",
+          start: "top 85%"
+        }
       }
-    });
+    );
   }, { scope: containerRef });
 
   return (
