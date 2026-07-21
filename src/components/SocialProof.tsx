@@ -55,7 +55,7 @@ export default function SocialProof() {
           Powering the workforce of <span className="text-primary">Fortune 500s</span> & high-growth innovators.
         </h2>
         <p className="text-foreground/70 text-sm font-light mt-4 max-w-xl mx-auto">
-          Over 450 corporate partners rely on Aura Staffing for critical talent acquisition and executive search.
+          Over 450 corporate partners rely on RecruitFlow for critical talent acquisition and executive search.
         </p>
       </div>
 

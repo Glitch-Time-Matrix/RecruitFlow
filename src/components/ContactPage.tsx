@@ -52,48 +52,48 @@ export default function ContactPage() {
       city: "New York HQ",
       address: "350 Fifth Avenue, Suite 6200, New York, NY 10118",
       phone: "+1 (212) 555-0192",
-      email: "ny.office@aurastaffing.com",
+      email: "ny.office@recruitflowstaffing.com",
       hours: "Mon - Fri: 8:00 AM - 6:00 PM EST",
     },
     {
       city: "Chicago Regional",
       address: "233 S Wacker Dr, Suite 4500, Chicago, IL 60606",
       phone: "+1 (312) 555-0184",
-      email: "chicago@aurastaffing.com",
+      email: "chicago@recruitflowstaffing.com",
       hours: "Mon - Fri: 8:00 AM - 6:00 PM CST",
     },
     {
       city: "San Francisco Tech Desk",
       address: "500 Howard Street, Suite 300, San Francisco, CA 94105",
       phone: "+1 (415) 555-0177",
-      email: "sf.tech@aurastaffing.com",
+      email: "sf.tech@recruitflowstaffing.com",
       hours: "Mon - Fri: 8:00 AM - 6:00 PM PST",
     },
     {
       city: "London International Desk",
       address: "1 Canada Square, Canary Wharf, London E14 5AA",
       phone: "+44 20 7946 0912",
-      email: "london@aurastaffing.com",
+      email: "london@recruitflowstaffing.com",
       hours: "Mon - Fri: 8:30 AM - 5:30 PM GMT",
     },
   ];
 
   const faqs = [
     {
-      q: "How fast can Aura Staffing present a qualified candidate shortlist?",
+      q: "How fast can RecruitFlow present a qualified candidate shortlist?",
       a: "For standard permanent and contract roles, our team presents an initial vetted shortlist of 3-5 candidates within 48 to 72 hours. Executive search timelines typically run 10-14 days due to extensive background and reference verification.",
     },
     {
-      q: "What is included in Aura's 90-Day Placement Retention Guarantee?",
-      a: "If a candidate placed by Aura Staffing voluntarily resigns or is terminated for cause within 90 days of employment, we provide a full, priority replacement search at no additional cost.",
+      q: "What is included in RecruitFlow's 90-Day Placement Retention Guarantee?",
+      a: "If a candidate placed by RecruitFlow voluntarily resigns or is terminated for cause within 90 days of employment, we provide a full, priority replacement search at no additional cost.",
     },
     {
       q: "How does contract staffing payroll and compliance work?",
-      a: "Aura acts as the Employer of Record (EOR) for contract personnel, managing all W2/1099 payroll, statutory taxes, workers' compensation insurance, health benefits, and labor law compliance.",
+      a: "RecruitFlow acts as the Employer of Record (EOR) for contract personnel, managing all W2/1099 payroll, statutory taxes, workers' compensation insurance, health benefits, and labor law compliance.",
     },
     {
       q: "Is candidate registration free for job seekers?",
-      a: "Yes. Aura Staffing Agency never charges candidates or job seekers any fees. Our services are entirely employer-funded.",
+      a: "Yes. RecruitFlow never charges candidates or job seekers any fees. Our services are entirely employer-funded.",
     },
   ];
 

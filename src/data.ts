@@ -249,7 +249,7 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "VP of Human Resources",
     company: "Apex Healthcare System",
     category: "HR Partner",
-    quote: "Aura Staffing replaced our chaotic manual recruitment process with sheer precision. They filled 14 specialized clinical director positions across three regional facilities in under three weeks, with zero attrition.",
+    quote: "RecruitFlow replaced our chaotic manual recruitment process with sheer precision. They filled 14 specialized clinical director positions across three regional facilities in under three weeks, with zero attrition.",
     avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80",
   },
   {
@@ -258,7 +258,7 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "Chief Operating Officer",
     company: "Nexus Industrial Group",
     category: "Employer",
-    quote: "When we needed a new Operations Director for our manufacturing plant, Aura conducted a confidential search and delivered three pristine executive candidates within 5 days. The candidate we hired has transformed our throughput.",
+    quote: "When we needed a new Operations Director for our manufacturing plant, RecruitFlow conducted a confidential search and delivered three pristine executive candidates within 5 days. The candidate we hired has transformed our throughput.",
     avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&h=150&q=80",
   },
   {
@@ -267,7 +267,7 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "Senior Director of R&D",
     company: "Vanguard Life Sciences",
     category: "Candidate",
-    quote: "As a senior candidate, working with Aura felt completely different from typical headhunters. They respected my confidential job search, negotiated my target compensation seamlessly, and matched me with an exceptional organization.",
+    quote: "As a senior candidate, working with RecruitFlow felt completely different from typical headhunters. They respected my confidential job search, negotiated my target compensation seamlessly, and matched me with an exceptional organization.",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
   },
   {
@@ -276,7 +276,7 @@ export const TESTIMONIALS: Testimonial[] = [
     role: "Head of Talent Acquisition",
     company: "Pinnacle Logistics",
     category: "HR Partner",
-    quote: "During our seasonal distribution surge, Aura provided 85 vetted contract warehouse leads and shift supervisors with complete payroll administration. Their team is our most trusted staffing partner.",
+    quote: "During our seasonal distribution surge, RecruitFlow provided 85 vetted contract warehouse leads and shift supervisors with complete payroll administration. Their team is our most trusted staffing partner.",
     avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&h=150&q=80",
   }
 ];

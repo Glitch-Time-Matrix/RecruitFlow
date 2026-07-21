@@ -334,7 +334,7 @@ export default function CandidatePortal({ activeJobs }: CandidatePortalProps) {
                         {match.matchScore}%
                       </span>
                       <span className="font-mono text-[9px] text-primary uppercase tracking-wider font-semibold">
-                        Aura Match
+                        RecruitFlow Match
                       </span>
                     </div>
 
@@ -383,7 +383,7 @@ export default function CandidatePortal({ activeJobs }: CandidatePortalProps) {
                         onClick={() => alert(`Your parsed application profile has been submitted for ${job.title}. One of our talent advisors will contact you shortly.`)}
                         className="px-4 py-2 rounded-lg bg-muted border border-border text-[11px] font-semibold text-foreground hover:border-primary/50 hover:bg-white shadow-sm transition-all duration-200 flex items-center gap-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50"
                       >
-                        Apply via Aura Portal
+                        Apply via RecruitFlow Portal
                         <ArrowUpRight className="size-3.5" />
                       </button>
                     </div>

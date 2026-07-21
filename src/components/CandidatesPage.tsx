@@ -43,7 +43,7 @@ export default function CandidatesPage({ prefilledJobTitle }: CandidatesPageProp
             Job Seeker & Candidate Portal
           </span>
           <h1 className="font-display font-bold text-3xl sm:text-4xl text-foreground tracking-tight">
-            Accelerate Your Career with Aura Executive Staffing.
+            Accelerate Your Career with RecruitFlow.
           </h1>
           <p className="text-foreground/70 text-xs sm:text-sm font-light leading-relaxed">
             Submit your resume directly to our confidential candidate index or use our AI Alignment engine to evaluate your resume against active client positions.

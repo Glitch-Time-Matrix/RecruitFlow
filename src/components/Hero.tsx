@@ -58,7 +58,7 @@ export default function Hero({ onNavigateCandidate, onNavigateEmployer }: HeroPr
 
           {/* Subheadline */}
           <p className="hero-subheadline text-foreground/70 text-base sm:text-lg font-light leading-relaxed mb-8 max-w-xl">
-            Aura Staffing Agency delivers specialized permanent, contract, and executive recruitment solutions across Healthcare, Technology, Manufacturing, Finance, Construction, and Engineering.
+            RecruitFlow delivers specialized permanent, contract, and executive recruitment solutions across Healthcare, Technology, Manufacturing, Finance, Construction, and Engineering.
           </p>
 
           {/* Primary and Secondary CTA Buttons */}
@@ -109,7 +109,7 @@ export default function Hero({ onNavigateCandidate, onNavigateEmployer }: HeroPr
             {/* Corporate Staffing Image */}
             <img 
               src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" 
-              alt="Aura Corporate Recruitment Headquarters"
+              alt="RecruitFlow Corporate Recruitment Headquarters"
               loading="lazy"
               className="absolute inset-0 size-full object-cover scale-[1.01] hover:scale-105 transition-transform duration-[4000ms] ease-out-quint"
             />

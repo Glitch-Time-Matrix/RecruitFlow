@@ -47,7 +47,7 @@ export default function Header({
         </div>
         <div className="flex flex-col">
           <span className="font-display font-bold text-base sm:text-lg tracking-tight text-foreground leading-none">
-            AURA
+            RECRUITFLOW
           </span>
           <span className="font-mono text-[9px] text-accent font-semibold uppercase tracking-widest mt-0.5">
             STAFFING AGENCY

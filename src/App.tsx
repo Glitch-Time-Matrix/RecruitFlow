@@ -184,7 +184,7 @@ export default function App() {
                 Ω
               </div>
               <span className="font-display font-bold text-base tracking-tight text-foreground uppercase leading-none">
-                AURA STAFFING
+                RECRUITFLOW STAFFING
               </span>
             </button>
             <p className="text-foreground/70 text-xs font-light max-w-sm leading-relaxed">
@@ -229,7 +229,7 @@ export default function App() {
               Contact Desk
             </h4>
             <div className="flex flex-col gap-2 text-xs text-foreground/70 font-light">
-              <p>Email: <a href="mailto:info@aurastaffing.com" className="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-accent/50 rounded cursor-pointer">info@aurastaffing.com</a></p>
+              <p>Email: <a href="mailto:info@recruitflowstaffing.com" className="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-accent/50 rounded cursor-pointer">info@recruitflowstaffing.com</a></p>
               <p>Phone: <a href="tel:+12125550192" className="text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-accent/50 rounded cursor-pointer">+1 (212) 555-0192</a></p>
               <button onClick={() => { setActivePage("contact"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="text-accent hover:underline text-left font-semibold mt-1 focus:outline-none focus:ring-2 focus:ring-accent/50 rounded cursor-pointer flex items-center gap-1 group">
                 Contact Form & FAQs <ArrowRight className="size-3 group-hover:translate-x-1 transition-transform" />
@@ -241,7 +241,7 @@ export default function App() {
 
         {/* Footer bottom bar */}
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-foreground/60 font-light">
-          <p>© {new Date().getFullYear()} Aura Staffing Agency. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} RecruitFlow. All rights reserved.</p>
           <div className="flex gap-4">
             <span className="text-foreground/60">Confidentiality Assured</span>
             <span>·</span>

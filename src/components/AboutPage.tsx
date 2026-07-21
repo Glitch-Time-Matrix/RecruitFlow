@@ -96,13 +96,13 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
           <div className="about-hero-text text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-xs font-mono font-medium text-foreground/80 mb-6 shadow-sm">
               <span className="flex size-2 rounded-full bg-accent animate-pulse"></span>
-              The Aura Advantage
+              The RecruitFlow Advantage
             </div>
             <h1 className="font-display font-bold text-4xl sm:text-5xl text-foreground tracking-tight leading-[1.1] mb-6">
               Elevating the standard of <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">executive recruitment</span> globally.
             </h1>
             <p className="text-foreground/70 text-base sm:text-lg font-light leading-relaxed mb-8">
-              Founded on the principles of precision, discretion, and strategic alignment, Aura Staffing Agency operates as a premier extension of your internal talent acquisition function. We don't just fill seats; we architect leadership teams.
+              Founded on the principles of precision, discretion, and strategic alignment, RecruitFlow operates as a premier extension of your internal talent acquisition function. We don't just fill seats; we architect leadership teams.
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
               Replacing fragmented recruitment with structured partnership.
             </h2>
             <p className="text-foreground/70 text-sm sm:text-base font-light leading-relaxed">
-              Traditional staffing agencies flood hiring managers with hundreds of unvetted resumes, creating friction, wasted interviews, and high attrition. At Aura, we operate as a confidential talent advisor.
+              Traditional staffing agencies flood hiring managers with hundreds of unvetted resumes, creating friction, wasted interviews, and high attrition. At RecruitFlow, we operate as a confidential talent advisor.
             </p>
             
             <div className="grid grid-cols-2 gap-8 pt-6 border-t border-border">
@@ -135,7 +135,7 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-[2rem] transform rotate-3 scale-105"></div>
             <img 
               src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1000&q=80" 
-              alt="Aura Executive Boardroom" 
+              alt="RecruitFlow Executive Boardroom" 
               loading="lazy"
               className="relative rounded-[2rem] w-full aspect-[4/3] object-cover shadow-2xl border border-border"
             />
@@ -212,7 +212,7 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
               Ready to scale your leadership?
             </h2>
             <p className="text-white/90 text-sm font-light max-w-lg mb-8">
-              Partner with Aura Staffing Agency to access our confidential network of vetted executives and specialized technical talent.
+              Partner with RecruitFlow to access our confidential network of vetted executives and specialized technical talent.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="px-8 py-3.5 rounded-xl bg-white text-primary font-bold text-sm hover:bg-muted transition-all shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50">

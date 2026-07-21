@@ -87,7 +87,7 @@ export default function JobsPage({ onApplyForJob }: JobsPageProps) {
             Active Client Opportunities & Placements.
           </h1>
           <p className="text-foreground/70 text-base sm:text-lg font-light leading-relaxed">
-            Explore verified corporate, healthcare, engineering, and technology openings managed directly by Aura Staffing Agency recruiters.
+            Explore verified corporate, healthcare, engineering, and technology openings managed directly by RecruitFlow recruiters.
           </p>
         </div>
 
@@ -159,7 +159,7 @@ export default function JobsPage({ onApplyForJob }: JobsPageProps) {
 
           <div className="flex items-center justify-between text-xs text-foreground/50 pt-2 border-t border-border">
             <span>Showing <strong className="text-foreground font-semibold">{filteredJobs.length}</strong> active openings</span>
-            <span className="text-[11px]">All roles actively managed by Aura Client Desk</span>
+            <span className="text-[11px]">All roles actively managed by RecruitFlow Client Desk</span>
           </div>
         </div>
 

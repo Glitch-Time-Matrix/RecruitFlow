@@ -577,7 +577,7 @@ export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess
             className="mt-1 size-4 rounded bg-background border-border text-primary focus:ring-primary cursor-pointer"
           />
           <label htmlFor="declarationConsent" className="text-xs text-foreground/70 leading-relaxed cursor-pointer">
-            I hereby declare that the information provided above is accurate. I authorize Aura Staffing Agency to hold my details in strict confidence and contact me regarding relevant corporate recruitment opportunities.
+            I hereby declare that the information provided above is accurate. I authorize RecruitFlow to hold my details in strict confidence and contact me regarding relevant corporate recruitment opportunities.
           </label>
         </div>
 
