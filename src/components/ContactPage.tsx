@@ -56,18 +56,18 @@ export default function ContactPage() {
   ];
 
   return (
-    <div className="w-full bg-[#070709] text-white py-16 sm:py-24 px-6 text-left">
+    <div className="w-full bg-background text-foreground py-16 sm:py-24 px-6 text-left">
       <div className="max-w-7xl mx-auto space-y-16">
         
         {/* Header Hero */}
         <div className="max-w-3xl space-y-4">
-          <span className="text-xs font-mono font-semibold uppercase tracking-widest text-brand-emerald block">
+          <span className="text-xs font-mono font-semibold uppercase tracking-widest text-primary block">
             Client & Candidate Contact Desk
           </span>
-          <h1 className="font-display font-bold text-4xl sm:text-5xl text-white tracking-tight leading-tight">
+          <h1 className="font-display font-bold text-4xl sm:text-5xl text-foreground tracking-tight leading-tight">
             Get in Touch with our Recruitment Advisors.
           </h1>
-          <p className="text-zinc-400 text-base sm:text-lg font-light leading-relaxed">
+          <p className="text-foreground/70 text-base sm:text-lg font-light leading-relaxed">
             Whether inquiring about executive staffing solutions, submitting a hiring proposal, or seeking application assistance, our regional offices respond within 24 hours.
           </p>
         </div>
@@ -79,27 +79,27 @@ export default function ContactPage() {
           </div>
 
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#09090d] border border-zinc-800/80 space-y-6">
-              <h3 className="font-display font-bold text-xl text-white">Global Headquarters & Offices</h3>
+            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-border shadow-sm space-y-6">
+              <h3 className="font-display font-bold text-xl text-foreground">Global Headquarters & Offices</h3>
               
-              <div className="space-y-6 divide-y divide-zinc-900">
+              <div className="space-y-6 divide-y divide-border">
                 {offices.map((office, idx) => (
                   <div key={idx} className={idx > 0 ? "pt-6" : ""}>
-                    <h4 className="text-white font-semibold text-sm flex items-center gap-2">
-                      <Building2 className="size-4 text-brand-emerald" />
+                    <h4 className="text-foreground font-semibold text-sm flex items-center gap-2">
+                      <Building2 className="size-4 text-primary" />
                       {office.city}
                     </h4>
-                    <p className="text-zinc-400 text-xs font-light mt-1 flex items-start gap-1.5">
-                      <MapPin className="size-3.5 text-zinc-500 shrink-0 mt-0.5" />
+                    <p className="text-foreground/70 text-xs font-light mt-1 flex items-start gap-1.5">
+                      <MapPin className="size-3.5 text-foreground/40 shrink-0 mt-0.5" />
                       <span>{office.address}</span>
                     </p>
-                    <div className="mt-2.5 flex flex-wrap gap-4 text-xs text-zinc-400 font-light">
-                      <a href={`tel:${office.phone}`} className="hover:text-brand-emerald flex items-center gap-1">
-                        <Phone className="size-3 text-brand-slate" />
+                    <div className="mt-2.5 flex flex-wrap gap-4 text-xs text-foreground/70 font-light">
+                      <a href={`tel:${office.phone}`} className="hover:text-primary flex items-center gap-1 transition-colors">
+                        <Phone className="size-3 text-secondary" />
                         {office.phone}
                       </a>
-                      <a href={`mailto:${office.email}`} className="hover:text-brand-emerald flex items-center gap-1">
-                        <Mail className="size-3 text-brand-slate" />
+                      <a href={`mailto:${office.email}`} className="hover:text-primary flex items-center gap-1 transition-colors">
+                        <Mail className="size-3 text-secondary" />
                         {office.email}
                       </a>
                     </div>
@@ -109,25 +109,25 @@ export default function ContactPage() {
             </div>
 
             {/* Map visual panel */}
-            <div className="p-6 rounded-3xl bg-zinc-950 border border-zinc-800 flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-brand-emerald/10 text-brand-emerald">
+            <div className="p-6 rounded-3xl bg-muted/50 border border-border shadow-sm flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-primary/10 text-primary">
                 <Clock className="size-6" />
               </div>
               <div>
-                <h4 className="text-white font-semibold text-sm">24/7 Candidate Support Line</h4>
-                <p className="text-zinc-400 text-xs font-light mt-0.5">Emergency shift fulfillment desk active for healthcare & industrial facilities.</p>
+                <h4 className="text-foreground font-semibold text-sm">24/7 Candidate Support Line</h4>
+                <p className="text-foreground/70 text-xs font-light mt-0.5">Emergency shift fulfillment desk active for healthcare & industrial facilities.</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* FAQs */}
-        <div className="pt-12 border-t border-zinc-900 space-y-8">
+        <div className="pt-12 border-t border-border space-y-8">
           <div>
-            <span className="text-xs font-mono font-semibold uppercase tracking-widest text-brand-slate block mb-2">
+            <span className="text-xs font-mono font-semibold uppercase tracking-widest text-secondary block mb-2">
               Frequently Asked Questions
             </span>
-            <h2 className="font-display font-bold text-2xl sm:text-3xl text-white">
+            <h2 className="font-display font-bold text-2xl sm:text-3xl text-foreground">
               Everything you need to know about our recruitment process.
             </h2>
           </div>
@@ -136,17 +136,17 @@ export default function ContactPage() {
             {faqs.map((faq, idx) => (
               <div
                 key={idx}
-                className="rounded-2xl bg-[#09090d] border border-zinc-800/80 overflow-hidden transition-colors"
+                className="rounded-2xl bg-white border border-border shadow-sm overflow-hidden transition-colors"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-5 text-left flex items-center justify-between font-semibold text-sm sm:text-base text-white hover:text-brand-emerald transition-colors"
+                  className="w-full p-5 text-left flex items-center justify-between font-semibold text-sm sm:text-base text-foreground hover:text-primary transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >
                   <span>{faq.q}</span>
-                  {openFaq === idx ? <ChevronUp className="size-5 text-brand-emerald shrink-0" /> : <ChevronDown className="size-5 text-zinc-500 shrink-0" />}
+                  {openFaq === idx ? <ChevronUp className="size-5 text-primary shrink-0" /> : <ChevronDown className="size-5 text-foreground/40 shrink-0" />}
                 </button>
                 {openFaq === idx && (
-                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-zinc-400 font-light border-t border-zinc-900 leading-relaxed">
+                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-foreground/70 font-light border-t border-border leading-relaxed">
                     {faq.a}
                   </div>
                 )}

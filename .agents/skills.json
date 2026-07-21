@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "path": "skills/anthropics-skills"
+    },
+    {
+      "path": "skills/agent-skills"
+    },
+    {
+      "path": "skills/ui-ux-pro-max-skill"
+    },
+    {
+      "path": "skills/gsap-skills"
+    },
+    {
+      "path": "skills/awesome-copilot"
+    }
+  ]
+}
