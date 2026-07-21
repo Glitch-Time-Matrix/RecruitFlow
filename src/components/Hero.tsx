@@ -1,204 +1,138 @@
 import React, { useRef } from "react";
-import { ArrowRight, Sparkles, Building2, TrendingUp } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { AGENCY_STATS } from "../data";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP);
 
 interface HeroProps {
   onNavigateCandidate: () => void;
   onNavigateEmployer: () => void;
 }
 
+const FLOATING_IMAGES = [
+  { src: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&q=80", top: "15%", left: "15%", size: "w-24 h-24", rotation: -6 },
+  { src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80", top: "25%", left: "80%", size: "w-32 h-32", rotation: 8 },
+  { src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=256&q=80", top: "70%", left: "10%", size: "w-28 h-28", rotation: -12 },
+  { src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80", top: "75%", left: "85%", size: "w-20 h-20", rotation: 15 },
+  { src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=256&q=80", top: "10%", left: "45%", size: "w-16 h-16", rotation: 5 },
+  { src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=256&q=80", top: "45%", left: "5%", size: "w-20 h-20", rotation: -5 },
+  { src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80", top: "50%", left: "92%", size: "w-24 h-24", rotation: -8 },
+  { src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=256&q=80", top: "85%", left: "40%", size: "w-16 h-16", rotation: 10 },
+  { src: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=256&q=80", top: "85%", left: "65%", size: "w-24 h-24", rotation: -15 },
+  { src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80", top: "12%", left: "70%", size: "w-20 h-20", rotation: 12 },
+  { src: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=256&q=80", top: "35%", left: "18%", size: "w-16 h-16", rotation: -20 },
+  { src: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=256&q=80", top: "35%", left: "75%", size: "w-16 h-16", rotation: 25 },
+];
+
 export default function Hero({ onNavigateCandidate, onNavigateEmployer }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const bgRef = useRef<HTMLImageElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
+    // Reveal text
     const tl = gsap.timeline();
-    
-    // Initial load animation
-    tl.fromTo(bgRef.current, 
-      { scale: 1.1, filter: "blur(10px)", opacity: 0 }, 
-      { scale: 1, filter: "blur(0px)", opacity: 1, duration: 1.5, ease: "power3.out" }
-    )
-    .fromTo(".hero-tag", 
-      { opacity: 0, y: 30 }, 
-      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 
-      "-=0.8"
-    )
-    .fromTo(".hero-headline .line", 
-      { opacity: 0, y: 50, rotation: 2 }, 
-      { opacity: 1, y: 0, rotation: 0, duration: 1, stagger: 0.15, ease: "power3.out" }, 
-      "-=0.6"
-    )
-    .fromTo(".hero-subheadline", 
-      { opacity: 0, y: 20 }, 
-      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 
-      "-=0.6"
-    )
-    .fromTo(".hero-cta-block", 
-      { opacity: 0, x: 50 }, 
-      { opacity: 1, x: 0, duration: 0.8, ease: "power3.out" }, 
-      "-=0.4"
-    );
+    tl.fromTo(".hero-kicker", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.2 })
+      .fromTo(".hero-title .line", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "power3.out" }, "-=0.4")
+      .fromTo(".hero-cta", { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.4");
 
-    // Parallax scrolling effect
-    gsap.to(bgRef.current, {
-      yPercent: 30, // Move background down as we scroll down (slower than foreground)
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true
-      }
-    });
-
-    gsap.to(textRef.current, {
-      yPercent: -40, // Move text up faster
-      opacity: 0,
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true
-      }
-    });
-
-    // Stats bar reveal
-    gsap.fromTo(".hero-stats div", 
-      { opacity: 0, y: 30 },
+    // Scatter elements pop-in
+    gsap.fromTo(".scatter-img", 
+      { opacity: 0, scale: 0.5 },
       { 
         opacity: 1, 
-        y: 0, 
-        duration: 0.6, 
-        stagger: 0.1, 
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".hero-stats",
-          start: "top 90%"
-        }
+        scale: 1, 
+        duration: 1, 
+        stagger: 0.05, 
+        ease: "back.out(1.5)",
+        delay: 0.4
       }
     );
+
+    // Continuous floating animation
+    gsap.utils.toArray(".scatter-img").forEach((el: any) => {
+      // Randomize float distances and durations
+      const randomY = gsap.utils.random(-25, 25);
+      const randomX = gsap.utils.random(-15, 15);
+      const randomRot = gsap.utils.random(-10, 10);
+      const randomDur = gsap.utils.random(4, 7);
+      
+      gsap.to(el, {
+        y: `+=${randomY}`,
+        x: `+=${randomX}`,
+        rotation: `+=${randomRot}`,
+        duration: randomDur,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: gsap.utils.random(0, 2) // Stagger the start of the float
+      });
+    });
 
   }, { scope: containerRef });
 
   return (
-    <>
-      <section ref={containerRef} className="relative w-full h-[95vh] min-h-[700px] overflow-hidden bg-background">
-        {/* Full-bleed Parallax Background */}
-        <div className="absolute inset-0 w-full h-[120%] -top-[10%] z-0">
-          <img 
-            ref={bgRef}
-            src="/hero-bg.png" 
-            alt="RecruitFlow Cinematic Background"
-            className="w-full h-full object-cover origin-center"
-          />
-          {/* Gradient veils for legibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/20 to-transparent"></div>
-        </div>
-
-        {/* Foreground Content */}
-        <div className="absolute inset-0 w-full h-full max-w-[1600px] mx-auto px-6 md:px-12 xl:px-24 flex items-center z-10 pointer-events-none">
-          <div ref={textRef} className="max-w-4xl pt-20">
-            {/* Tag */}
-            <div className="hero-tag inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-mono font-medium text-foreground mb-8">
-              <span className="flex size-2 rounded-full bg-accent animate-pulse shadow-[0_0_10px_rgba(22,163,74,0.8)]"></span>
-              Premier Executive Staffing
-            </div>
-
-            {/* Massive Typography */}
-            <h1 className="hero-headline font-display font-bold text-5xl md:text-7xl lg:text-[100px] text-foreground tracking-tighter leading-[0.95] mb-8">
-              <div className="line overflow-hidden"><span className="block">Connecting</span></div>
-              <div className="line overflow-hidden"><span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">exceptional talent</span></div>
-              <div className="line overflow-hidden"><span className="block">with world-class</span></div>
-              <div className="line overflow-hidden"><span className="block">enterprises.</span></div>
-            </h1>
-
-            {/* Subheadline */}
-            <p className="hero-subheadline text-foreground/80 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
-              RecruitFlow delivers specialized permanent, contract, and executive recruitment solutions across Healthcare, Technology, Manufacturing, Finance, and Engineering.
-            </p>
+    <section ref={containerRef} className="relative w-full h-screen min-h-[700px] bg-white overflow-hidden flex flex-col items-center justify-center">
+      
+      {/* Floating Constellation Images */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        {FLOATING_IMAGES.map((img, idx) => (
+          <div 
+            key={idx}
+            className={`scatter-img absolute ${img.size} rounded-[2rem] overflow-hidden shadow-2xl shadow-black/5 bg-muted hidden md:block`}
+            style={{
+              top: img.top,
+              left: img.left,
+              transform: `rotate(${img.rotation}deg)`
+            }}
+          >
+            <img 
+              src={img.src} 
+              alt="Talent"
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
           </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Dual-CTA Block (Pinned to bottom right, inspired by doghouse.nl) */}
-        <div className="hero-cta-block absolute bottom-0 right-0 md:bottom-12 md:right-12 z-20 flex flex-col sm:flex-row shadow-2xl">
-          {/* For Employers */}
+      {/* Central Content */}
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
+        
+        {/* Kicker */}
+        <span className="hero-kicker font-mono text-[11px] font-bold tracking-[0.3em] uppercase text-foreground mb-6">
+          RecruitFlow
+        </span>
+
+        {/* Massive Typography */}
+        <h1 className="hero-title font-display font-medium text-5xl sm:text-6xl md:text-7xl lg:text-[85px] text-foreground tracking-[-0.04em] leading-[1.05] mb-12">
+          <div className="overflow-hidden pb-2"><span className="line block">Connecting exceptional</span></div>
+          <div className="overflow-hidden pb-2"><span className="line block text-foreground/50">talent with world-class</span></div>
+          <div className="overflow-hidden pb-2"><span className="line block">enterprises.</span></div>
+        </h1>
+
+        {/* Minimalist CTAs */}
+        <div className="hero-cta flex items-center justify-center gap-4">
           <button 
             onClick={onNavigateEmployer}
-            className="group flex-1 sm:w-64 md:w-72 p-8 md:p-10 bg-primary hover:bg-primary/95 text-white text-left flex flex-col justify-between min-h-[220px] transition-colors border-r border-white/10 cursor-pointer focus:outline-none"
+            className="px-7 py-3.5 rounded-full bg-foreground text-background text-sm font-semibold tracking-tight hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-foreground/50 shadow-xl shadow-black/10"
           >
-            <div>
-              <div className="flex items-center gap-2 mb-6 text-white/70">
-                <Building2 className="size-4" />
-                <span className="text-[10px] uppercase tracking-widest font-mono font-semibold">For Companies</span>
-              </div>
-              <h3 className="font-display font-bold text-2xl md:text-3xl leading-tight">
-                Hire Top-Tier <br/>Professionals
-              </h3>
-            </div>
-            <div className="mt-8 flex justify-end">
-              <div className="size-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-all duration-300">
-                <ArrowRight className="size-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
-              </div>
-            </div>
+            Hire Talent
           </button>
-
-          {/* For Job Seekers */}
           <button 
             onClick={onNavigateCandidate}
-            className="group flex-1 sm:w-64 md:w-72 p-8 md:p-10 bg-accent hover:bg-accent/95 text-white text-left flex flex-col justify-between min-h-[220px] transition-colors cursor-pointer focus:outline-none"
+            className="px-7 py-3.5 rounded-full bg-white border border-border text-foreground text-sm font-semibold tracking-tight hover:scale-105 hover:bg-muted transition-all duration-300 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-foreground/50 shadow-sm"
           >
-            <div>
-              <div className="flex items-center gap-2 mb-6 text-white/70">
-                <Sparkles className="size-4" />
-                <span className="text-[10px] uppercase tracking-widest font-mono font-semibold">For Job Seekers</span>
-              </div>
-              <h3 className="font-display font-bold text-2xl md:text-3xl leading-tight">
-                Find Your <br/>Dream Role
-              </h3>
-            </div>
-            <div className="mt-8 flex justify-end">
-              <div className="size-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-accent transition-all duration-300">
-                <ArrowRight className="size-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
-              </div>
-            </div>
+            Submit Resume
+            <ArrowUpRight className="size-3.5 text-foreground/50" />
           </button>
         </div>
-      </section>
-
-      {/* Prominent Agency Stats Bar - Moved directly below the new Hero */}
-      <section className="bg-background py-16 border-b border-border">
-        <div className="hero-stats max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 text-left">
-          {AGENCY_STATS.map((stat, idx) => (
-            <div key={idx} className="flex flex-col items-start text-left group">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2.5 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                  <TrendingUp className="size-5" />
-                </div>
-                <span className="text-foreground/50 font-mono text-[10px] font-bold uppercase tracking-widest">Metric 0{idx + 1}</span>
-              </div>
-              <span className="font-display font-bold text-4xl sm:text-5xl text-foreground tracking-tight leading-none mb-3">
-                {stat.value}
-              </span>
-              <span className="text-primary font-semibold text-xs tracking-tight uppercase mb-2">
-                {stat.label}
-              </span>
-              <span className="text-foreground/70 text-xs font-light leading-relaxed max-w-[200px]">
-                {stat.desc}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-    </>
+      </div>
+      
+      {/* Scroll Hint */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-foreground/40 text-[10px] uppercase tracking-widest font-mono">
+        <span className="animate-bounce">↓</span> Scroll to discover
+      </div>
+    </section>
   );
 }
 
