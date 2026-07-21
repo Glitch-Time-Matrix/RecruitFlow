@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Search, Briefcase, MapPin, DollarSign, Calendar, ChevronDown, ChevronUp, Sparkles, Filter, CheckCircle2 } from "lucide-react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Job } from "../types";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 interface ActivePositionsProps {
   jobs: Job[];
@@ -12,6 +17,21 @@ export default function ActivePositions({ jobs, onSelectJobForMatching }: Active
   const [selectedDept, setSelectedDept] = useState("All");
   const [selectedType, setSelectedType] = useState("All");
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.from(".job-card", {
+      opacity: 0,
+      y: 24,
+      duration: 0.5,
+      stagger: 0.08,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".job-grid",
+        start: "top 85%"
+      }
+    });
+  }, { scope: containerRef });
 
   // Departments list for filter dropdown
   const DEPARTMENTS = ["All", "Engineering", "Creative & Design", "Executive & Creative", "Executive & Engineering", "Marketing"];
@@ -38,7 +58,7 @@ export default function ActivePositions({ jobs, onSelectJobForMatching }: Active
   };
 
   return (
-    <section id="active-roles" className="py-20 border-b border-border bg-background relative">
+    <section ref={containerRef} id="active-roles" className="py-20 border-b border-border bg-background relative">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Title */}
@@ -105,14 +125,14 @@ export default function ActivePositions({ jobs, onSelectJobForMatching }: Active
 
         {/* Directory Grid */}
         {filteredJobs.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="job-grid grid grid-cols-1 gap-4">
             {filteredJobs.map((job) => {
               const isExpanded = expandedJobId === job.id;
 
               return (
                 <div 
                   key={job.id}
-                  className={`p-6 rounded-2xl bg-white border transition-all duration-300 text-left ${
+                  className={`job-card p-6 rounded-2xl bg-white border transition-all duration-300 text-left ${
                     isExpanded 
                       ? "border-primary/30 shadow-lg ring-1 ring-primary/10" 
                       : "border-border shadow-sm hover:shadow-md hover:border-primary/20"

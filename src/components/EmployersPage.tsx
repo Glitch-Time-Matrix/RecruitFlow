@@ -1,17 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import EmployerHiringRequestForm from "./EmployerHiringRequestForm";
 import EmployerPortal from "./EmployerPortal";
 import { Building2, FileText, Cpu } from "lucide-react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(useGSAP);
 
 export default function EmployersPage() {
   const [activeTab, setActiveTab] = useState<"request" | "ai_architect">("request");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.from(".emp-header > *", {
+      opacity: 0,
+      y: 15,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: "power2.out"
+    });
+
+    gsap.from(".emp-content", {
+      opacity: 0,
+      y: 20,
+      duration: 0.5,
+      delay: 0.2,
+      ease: "power2.out"
+    });
+  }, { scope: containerRef, dependencies: [activeTab] });
 
   return (
-    <div className="w-full bg-background text-foreground py-12 sm:py-20 px-6 text-left">
+    <div ref={containerRef} className="w-full bg-background text-foreground py-12 sm:py-20 px-6 text-left">
       <div className="max-w-7xl mx-auto space-y-10">
         
         {/* Header Hero */}
-        <div className="max-w-3xl space-y-3">
+        <div className="emp-header max-w-3xl space-y-3">
           <span className="text-xs font-mono font-semibold uppercase tracking-widest text-primary block">
             Employer & Client Services Portal
           </span>
@@ -24,7 +47,7 @@ export default function EmployersPage() {
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-muted/50 border border-border w-fit shadow-sm">
+        <div className="emp-header flex items-center gap-2 p-1.5 rounded-2xl bg-muted/50 border border-border w-fit shadow-sm">
           <button
             onClick={() => setActiveTab("request")}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold tracking-tight transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 ${
@@ -50,10 +73,11 @@ export default function EmployersPage() {
         </div>
 
         {/* Content Display */}
-        {activeTab === "request" ? (
-          <EmployerHiringRequestForm />
-        ) : (
-          <div className="space-y-6">
+        <div className="emp-content">
+          {activeTab === "request" ? (
+            <EmployerHiringRequestForm />
+          ) : (
+            <div className="space-y-6">
             <div className="p-4 rounded-2xl bg-muted border border-border text-xs text-foreground/70 shadow-sm">
               <span className="text-primary font-mono font-semibold uppercase tracking-wider block mb-1">
                 Interactive Spec Generation Tool
@@ -63,6 +87,7 @@ export default function EmployersPage() {
             <EmployerPortal />
           </div>
         )}
+        </div>
 
       </div>
     </div>

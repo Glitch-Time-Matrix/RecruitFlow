@@ -1,9 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import GeneralContactForm from "./GeneralContactForm";
 import { Mail, Phone, MapPin, Clock, Building2, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 export default function ContactPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Header reveal
+    gsap.from(".contact-header > *", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out"
+    });
+
+    // Form and Offices reveal
+    gsap.from(".contact-panel", {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".contact-grid",
+        start: "top 85%"
+      }
+    });
+
+    // FAQ reveal
+    gsap.from(".faq-item", {
+      opacity: 0,
+      y: 20,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".faq-container",
+        start: "top 85%"
+      }
+    });
+  }, { scope: containerRef });
 
   const offices = [
     {
@@ -56,11 +98,11 @@ export default function ContactPage() {
   ];
 
   return (
-    <div className="w-full bg-background text-foreground py-16 sm:py-24 px-6 text-left">
+    <div ref={containerRef} className="w-full bg-background text-foreground py-16 sm:py-24 px-6 text-left">
       <div className="max-w-7xl mx-auto space-y-16">
         
         {/* Header Hero */}
-        <div className="max-w-3xl space-y-4">
+        <div className="contact-header max-w-3xl space-y-4">
           <span className="text-xs font-mono font-semibold uppercase tracking-widest text-primary block">
             Client & Candidate Contact Desk
           </span>
@@ -73,13 +115,13 @@ export default function ContactPage() {
         </div>
 
         {/* Form and Office Contact Info */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          <div className="lg:col-span-7">
+        <div className="contact-grid grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <div className="contact-panel lg:col-span-7">
             <GeneralContactForm />
           </div>
 
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-6 sm:p-8 rounded-3xl bg-white border border-border shadow-sm space-y-6">
+            <div className="contact-panel p-6 sm:p-8 rounded-3xl bg-white border border-border shadow-sm space-y-6">
               <h3 className="font-display font-bold text-xl text-foreground">Global Headquarters & Offices</h3>
               
               <div className="space-y-6 divide-y divide-border">
@@ -109,7 +151,7 @@ export default function ContactPage() {
             </div>
 
             {/* Map visual panel */}
-            <div className="p-6 rounded-3xl bg-muted/50 border border-border shadow-sm flex items-center gap-4">
+            <div className="contact-panel p-6 rounded-3xl bg-muted/50 border border-border shadow-sm flex items-center gap-4">
               <div className="p-3 rounded-2xl bg-primary/10 text-primary">
                 <Clock className="size-6" />
               </div>
@@ -122,8 +164,8 @@ export default function ContactPage() {
         </div>
 
         {/* FAQs */}
-        <div className="pt-12 border-t border-border space-y-8">
-          <div>
+        <div className="faq-container pt-12 border-t border-border space-y-8">
+          <div className="faq-item">
             <span className="text-xs font-mono font-semibold uppercase tracking-widest text-secondary block mb-2">
               Frequently Asked Questions
             </span>
@@ -136,7 +178,7 @@ export default function ContactPage() {
             {faqs.map((faq, idx) => (
               <div
                 key={idx}
-                className="rounded-2xl bg-white border border-border shadow-sm overflow-hidden transition-colors"
+                className="faq-item rounded-2xl bg-white border border-border shadow-sm overflow-hidden transition-colors"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}

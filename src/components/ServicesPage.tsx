@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { CheckCircle2, ShieldCheck, UserCheck, Briefcase, Users, GraduationCap, DollarSign, Layers, ArrowUpRight, Award, Search, Target } from "lucide-react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RECRUITMENT_SERVICES } from "../data";
 
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 interface ServicesPageProps {
   onNavigateEmployer: () => void;
 }
@@ -17,10 +21,61 @@ const SERVICE_ICONS = [
 ];
 
 export default function ServicesPage({ onNavigateEmployer }: ServicesPageProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Header reveal
+    gsap.from(".services-header > *", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out"
+    });
+
+    // Services Cards
+    gsap.from(".service-card", {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".services-grid",
+        start: "top 80%"
+      }
+    });
+
+    // Process Steps
+    gsap.from(".process-step", {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".process-grid",
+        start: "top 85%"
+      }
+    });
+
+    // Guarantee Banner
+    gsap.from(".guarantee-banner", {
+      opacity: 0,
+      scale: 0.95,
+      duration: 0.6,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".guarantee-banner",
+        start: "top 85%"
+      }
+    });
+  }, { scope: containerRef });
+
   return (
-    <div className="bg-background min-h-screen text-foreground pb-24 text-left">
+    <div ref={containerRef} className="bg-background min-h-screen text-foreground pb-24 text-left">
       {/* Header Section */}
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-16">
+      <div className="services-header max-w-7xl mx-auto px-6 pt-24 pb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-xs font-mono font-medium text-primary mb-6 shadow-sm">
           <span className="flex size-2 rounded-full bg-accent animate-pulse"></span>
           Executive Recruitment Solutions
@@ -35,11 +90,11 @@ export default function ServicesPage({ onNavigateEmployer }: ServicesPageProps) 
 
       {/* Services Grid */}
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">
+        <div className="services-grid grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">
           {RECRUITMENT_SERVICES.map((service, idx) => {
             const Icon = SERVICE_ICONS[idx % SERVICE_ICONS.length];
             return (
-              <div key={service.id} className="group p-8 sm:p-10 rounded-[2rem] bg-white border border-border shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 flex flex-col">
+              <div key={service.id} className="service-card group p-8 sm:p-10 rounded-[2rem] bg-white border border-border shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 flex flex-col">
                 <div className="flex items-start justify-between mb-8">
                   <div className="size-14 rounded-2xl bg-muted border border-border flex items-center justify-center text-foreground group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                     <Icon className="size-6" />
@@ -99,7 +154,7 @@ export default function ServicesPage({ onNavigateEmployer }: ServicesPageProps) 
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+          <div className="process-grid grid grid-cols-1 md:grid-cols-4 gap-4 relative">
             {/* Connecting line for desktop */}
             <div className="hidden md:block absolute top-1/2 left-0 w-full h-[1px] bg-border -translate-y-1/2 z-0"></div>
 
@@ -109,7 +164,7 @@ export default function ServicesPage({ onNavigateEmployer }: ServicesPageProps) 
               { icon: ShieldCheck, title: "Reference Auditing", desc: "Comprehensive background checks and peer reference verification." },
               { icon: Target, title: "Placement & Follow-up", desc: "Offer negotiation, onboarding support, and 90-day retention tracking." }
             ].map((step, idx) => (
-              <div key={idx} className="relative z-10 flex flex-col items-center text-center p-6 rounded-2xl bg-white border border-border shadow-sm">
+              <div key={idx} className="process-step relative z-10 flex flex-col items-center text-center p-6 rounded-2xl bg-white border border-border shadow-sm">
                 <div className="size-12 rounded-full bg-muted border border-border flex items-center justify-center text-foreground mb-4 shadow-sm">
                   <step.icon className="size-5" />
                 </div>
@@ -121,7 +176,7 @@ export default function ServicesPage({ onNavigateEmployer }: ServicesPageProps) 
         </div>
 
         {/* Guarantee Banner */}
-        <div className="rounded-[2.5rem] bg-white border border-primary/20 bg-gradient-to-r from-primary/10 to-secondary/5 p-10 md:p-16 flex flex-col md:flex-row items-center gap-8 shadow-xl">
+        <div className="guarantee-banner rounded-[2.5rem] bg-white border border-primary/20 bg-gradient-to-r from-primary/10 to-secondary/5 p-10 md:p-16 flex flex-col md:flex-row items-center gap-8 shadow-xl">
           <div className="size-20 rounded-full bg-white text-primary flex items-center justify-center shrink-0 border border-primary/20 shadow-md">
             <Award className="size-10" />
           </div>

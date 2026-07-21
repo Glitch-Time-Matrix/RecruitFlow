@@ -1,7 +1,12 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { Search, MapPin, DollarSign, Briefcase, Filter, Sparkles, Building2, Clock, CheckCircle2, ArrowUpRight, X } from "lucide-react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { INITIAL_JOBS } from "../data";
 import { Job } from "../types";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 interface JobsPageProps {
   onApplyForJob: (jobTitle: string) => void;
@@ -12,6 +17,40 @@ export default function JobsPage({ onApplyForJob }: JobsPageProps) {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("All Departments");
   const [selectedType, setSelectedType] = useState<string>("All Types");
   const [selectedJobModal, setSelectedJobModal] = useState<Job | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Header reveal
+    gsap.from(".jobs-header > *", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out"
+    });
+
+    // Search & Filter reveal
+    gsap.from(".jobs-search", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      delay: 0.2,
+      ease: "power2.out"
+    });
+
+    // Job cards stagger
+    gsap.from(".job-card", {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".jobs-grid",
+        start: "top 85%"
+      }
+    });
+  }, { scope: containerRef, dependencies: [filteredJobs] });
 
   const departmentsList = useMemo(() => {
     const list = Array.from(new Set(INITIAL_JOBS.map((p) => p.department)));
@@ -35,11 +74,11 @@ export default function JobsPage({ onApplyForJob }: JobsPageProps) {
   }, [searchTerm, selectedDepartment, selectedType]);
 
   return (
-    <div className="bg-background min-h-screen text-foreground pb-24 text-left">
+    <div ref={containerRef} className="bg-background min-h-screen text-foreground pb-24 text-left">
       <div className="max-w-7xl mx-auto space-y-12 px-6 pt-24">
         
         {/* Header Hero */}
-        <div className="max-w-3xl space-y-4">
+        <div className="jobs-header max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-xs font-mono font-medium text-primary shadow-sm mb-2">
             <span className="flex size-2 rounded-full bg-accent animate-pulse"></span>
             Executive Job Directory
@@ -53,7 +92,7 @@ export default function JobsPage({ onApplyForJob }: JobsPageProps) {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="p-6 rounded-3xl bg-white border border-border space-y-4 shadow-md">
+        <div className="jobs-search p-6 rounded-3xl bg-white border border-border space-y-4 shadow-md">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             {/* Search Input */}
             <div className="md:col-span-5 relative">
@@ -125,11 +164,11 @@ export default function JobsPage({ onApplyForJob }: JobsPageProps) {
         </div>
 
         {/* Job Listings Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="jobs-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredJobs.map((job) => (
             <div
               key={job.id}
-              className="p-6 rounded-3xl bg-white border border-border shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 flex flex-col justify-between space-y-6 group"
+              className="job-card p-6 rounded-3xl bg-white border border-border shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 flex flex-col justify-between space-y-6 group"
             >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">

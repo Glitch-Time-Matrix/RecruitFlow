@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useRef } from "react";
 import { ArrowUpRight, CheckCircle2, Stethoscope, Laptop, Factory, HardHat, ShoppingBag, Landmark, Utensils, Truck, Zap, Car } from "lucide-react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { INDUSTRIES_SERVED } from "../data";
 
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 interface IndustriesPageProps {
   onNavigateCandidate: () => void;
   onNavigateEmployer: () => void;
@@ -20,11 +24,36 @@ export default function IndustriesPage({ onNavigateCandidate, onNavigateEmployer
     "Engineering & Energy": <Zap className="size-6 text-accent" />,
     "Automotive & Mobility": <Car className="size-6 text-primary" />,
   };
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Header reveal
+    gsap.from(".ind-header > *", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out"
+    });
+
+    // Industries Cards
+    gsap.from(".ind-card", {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".ind-grid",
+        start: "top 85%"
+      }
+    });
+  }, { scope: containerRef });
 
   return (
-    <div className="bg-background min-h-screen text-foreground pb-24 text-left">
+    <div ref={containerRef} className="bg-background min-h-screen text-foreground pb-24 text-left">
       {/* Header Section */}
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-16">
+      <div className="ind-header max-w-7xl mx-auto px-6 pt-24 pb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-xs font-mono font-medium text-primary mb-6 shadow-sm">
           <span className="flex size-2 rounded-full bg-accent animate-pulse"></span>
           Specialized Industry Vertical Practices
@@ -40,11 +69,11 @@ export default function IndustriesPage({ onNavigateCandidate, onNavigateEmployer
       <div className="max-w-7xl mx-auto px-6 space-y-16">
         
         {/* Industries Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="ind-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {INDUSTRIES_SERVED.map((ind) => (
             <div 
               key={ind.id}
-              className="p-8 rounded-3xl bg-white border border-border shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 space-y-6 group flex flex-col justify-between"
+              className="ind-card p-8 rounded-3xl bg-white border border-border shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 space-y-6 group flex flex-col justify-between"
             >
               <div className="space-y-4">
                 <div className="flex justify-between items-start">

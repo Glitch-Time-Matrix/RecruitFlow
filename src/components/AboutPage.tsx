@@ -1,20 +1,99 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Building2, ShieldCheck, Award, Users, Target, Heart, Eye, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { LEADERSHIP_TEAM, AGENCY_STATS } from "../data";
 
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 interface AboutPageProps {
   onNavigateCandidate: () => void;
   onNavigateEmployer: () => void;
 }
 
 export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: AboutPageProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Hero Section
+    gsap.from(".about-hero-text > *", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out"
+    });
+
+    // Story Section
+    gsap.from(".about-story-text", {
+      opacity: 0,
+      x: -30,
+      duration: 0.6,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".about-story-text",
+        start: "top 80%"
+      }
+    });
+
+    gsap.from(".about-story-img", {
+      opacity: 0,
+      x: 30,
+      duration: 0.6,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".about-story-img",
+        start: "top 80%"
+      }
+    });
+
+    // Value Cards
+    gsap.from(".about-value-card", {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".about-value-grid",
+        start: "top 80%"
+      }
+    });
+
+    // Leadership Cards
+    gsap.from(".about-leader-card", {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".about-leader-grid",
+        start: "top 80%"
+      }
+    });
+
+    // CTA Banner
+    gsap.from(".about-cta-content > *", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: ".about-cta-section",
+        start: "top 80%"
+      }
+    });
+  }, { scope: containerRef });
+
   return (
-    <div className="bg-background min-h-screen text-foreground">
+    <div ref={containerRef} className="bg-background min-h-screen text-foreground">
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
         <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none"></div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
-          <div className="text-left">
+          <div className="about-hero-text text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-xs font-mono font-medium text-foreground/80 mb-6 shadow-sm">
               <span className="flex size-2 rounded-full bg-accent animate-pulse"></span>
               The Aura Advantage
@@ -32,7 +111,7 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
       <div className="max-w-7xl mx-auto space-y-20 px-6 pb-24">
         {/* Story Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-7 space-y-6">
+          <div className="about-story-text lg:col-span-7 space-y-6">
             <h2 className="font-display font-bold text-2xl sm:text-3xl text-foreground">
               Replacing fragmented recruitment with structured partnership.
             </h2>
@@ -52,7 +131,7 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
             </div>
           </div>
 
-          <div className="relative">
+          <div className="about-story-img relative">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-[2rem] transform rotate-3 scale-105"></div>
             <img 
               src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1000&q=80" 
@@ -64,8 +143,8 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
         </div>
 
         {/* Mission, Vision, Values Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-border">
-          <div className="p-8 rounded-3xl bg-white border border-border space-y-3 shadow-sm">
+        <div className="about-value-grid grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-border">
+          <div className="about-value-card p-8 rounded-3xl bg-white border border-border space-y-3 shadow-sm">
             <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
               <Target className="size-5" />
             </div>
@@ -75,7 +154,7 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-white border border-border space-y-3 shadow-sm">
+          <div className="about-value-card p-8 rounded-3xl bg-white border border-border space-y-3 shadow-sm">
             <div className="size-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center">
               <Eye className="size-5" />
             </div>
@@ -85,7 +164,7 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-white border border-border space-y-3 shadow-sm">
+          <div className="about-value-card p-8 rounded-3xl bg-white border border-border space-y-3 shadow-sm">
             <div className="size-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
               <Heart className="size-5" />
             </div>
@@ -107,9 +186,9 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="about-leader-grid grid grid-cols-1 md:grid-cols-3 gap-8">
             {LEADERSHIP_TEAM.map((member, idx) => (
-              <div key={idx} className="p-6 rounded-3xl bg-white border border-border space-y-4 shadow-sm">
+              <div key={idx} className="about-leader-card p-6 rounded-3xl bg-white border border-border space-y-4 shadow-sm">
                 <div className="aspect-square rounded-2xl overflow-hidden border border-border">
                   <img src={member.image} alt={member.name} className="size-full object-cover" />
                 </div>
@@ -125,10 +204,10 @@ export default function AboutPage({ onNavigateCandidate, onNavigateEmployer }: A
       </div>
 
       {/* CTA Banner */}
-      <section className="py-24 px-6 relative overflow-hidden bg-background">
+      <section className="about-cta-section py-24 px-6 relative overflow-hidden bg-background">
         <div className="max-w-5xl mx-auto bg-gradient-to-r from-primary to-secondary rounded-[2.5rem] p-12 md:p-16 text-center relative overflow-hidden shadow-xl">
           <div className="absolute inset-0 grid-bg opacity-20 mix-blend-overlay"></div>
-          <div className="relative z-10 flex flex-col items-center">
+          <div className="about-cta-content relative z-10 flex flex-col items-center">
             <h2 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight mb-4">
               Ready to scale your leadership?
             </h2>
