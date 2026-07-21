@@ -1,10 +1,11 @@
 import React, { useRef } from "react";
-import { ArrowUpRight, Sparkles, Building2, TrendingUp, ShieldCheck } from "lucide-react";
+import { ArrowRight, Sparkles, Building2, TrendingUp } from "lucide-react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AGENCY_STATS } from "../data";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 interface HeroProps {
   onNavigateCandidate: () => void;
@@ -13,143 +14,191 @@ interface HeroProps {
 
 export default function Hero({ onNavigateCandidate, onNavigateEmployer }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const bgRef = useRef<HTMLImageElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     const tl = gsap.timeline();
     
-    tl.from(".hero-tag", { opacity: 0, y: 15, duration: 0.4, ease: "power2.out" })
-      .from(".hero-headline", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out" }, "-=0.2")
-      .from(".hero-subheadline", { opacity: 0, y: 20, duration: 0.6, ease: "power2.out" }, "-=0.4")
-      .from(".hero-cta button", { opacity: 0, y: 15, duration: 0.5, stagger: 0.1, ease: "power2.out" }, "-=0.4")
-      .from(".hero-trust div", { opacity: 0, x: -10, duration: 0.4, stagger: 0.1, ease: "power2.out" }, "-=0.2")
-      .from(".hero-image-panel", { opacity: 0, scale: 0.95, duration: 0.8, ease: "power3.out" }, "-=1")
-      .from(".hero-stats div", { opacity: 0, y: 20, duration: 0.5, stagger: 0.1, ease: "power2.out" }, "-=0.5");
+    // Initial load animation
+    tl.fromTo(bgRef.current, 
+      { scale: 1.1, filter: "blur(10px)", opacity: 0 }, 
+      { scale: 1, filter: "blur(0px)", opacity: 1, duration: 1.5, ease: "power3.out" }
+    )
+    .fromTo(".hero-tag", 
+      { opacity: 0, y: 30 }, 
+      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 
+      "-=0.8"
+    )
+    .fromTo(".hero-headline .line", 
+      { opacity: 0, y: 50, rotation: 2 }, 
+      { opacity: 1, y: 0, rotation: 0, duration: 1, stagger: 0.15, ease: "power3.out" }, 
+      "-=0.6"
+    )
+    .fromTo(".hero-subheadline", 
+      { opacity: 0, y: 20 }, 
+      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 
+      "-=0.6"
+    )
+    .fromTo(".hero-cta-block", 
+      { opacity: 0, x: 50 }, 
+      { opacity: 1, x: 0, duration: 0.8, ease: "power3.out" }, 
+      "-=0.4"
+    );
 
-    gsap.to(".pulse-glow-bg", {
-      y: 30,
-      x: 20,
-      duration: 4,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-      stagger: 2
+    // Parallax scrolling effect
+    gsap.to(bgRef.current, {
+      yPercent: 30, // Move background down as we scroll down (slower than foreground)
+      ease: "none",
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
     });
+
+    gsap.to(textRef.current, {
+      yPercent: -40, // Move text up faster
+      opacity: 0,
+      ease: "none",
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+
+    // Stats bar reveal
+    gsap.fromTo(".hero-stats div", 
+      { opacity: 0, y: 30 },
+      { 
+        opacity: 1, 
+        y: 0, 
+        duration: 0.6, 
+        stagger: 0.1, 
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".hero-stats",
+          start: "top 90%"
+        }
+      }
+    );
+
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="relative w-full py-16 md:py-24 px-6 grid-bg border-b border-border overflow-hidden">
-      {/* Dynamic Background Glows */}
-      <div className="absolute top-[10%] left-[20%] w-[350px] h-[350px] rounded-full bg-accent/10 blur-[100px] pointer-events-none pulse-glow-bg"></div>
-      <div className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] rounded-full bg-secondary/10 blur-[110px] pointer-events-none pulse-glow-bg"></div>
+    <>
+      <section ref={containerRef} className="relative w-full h-[95vh] min-h-[700px] overflow-hidden bg-background">
+        {/* Full-bleed Parallax Background */}
+        <div className="absolute inset-0 w-full h-[120%] -top-[10%] z-0">
+          <img 
+            ref={bgRef}
+            src="/hero-bg.png" 
+            alt="RecruitFlow Cinematic Background"
+            className="w-full h-full object-cover origin-center"
+          />
+          {/* Gradient veils for legibility */}
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/20 to-transparent"></div>
+        </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-        {/* Core Narrative Heading & Calls to Action */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left">
-          {/* Tag */}
-          <div className="hero-tag inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-xs font-mono font-medium text-foreground/80 mb-6 shadow-sm">
-            <span className="flex size-2 rounded-full bg-accent animate-pulse"></span>
-            Premier Corporate Recruitment & Executive Staffing Agency
-          </div>
-
-          {/* Heading */}
-          <h1 className="hero-headline font-display font-bold text-4xl sm:text-5xl lg:text-[58px] text-foreground tracking-tight leading-[1.08] mb-6">
-            Connecting <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">exceptional talent</span> with world-class enterprises.
-          </h1>
-
-          {/* Subheadline */}
-          <p className="hero-subheadline text-foreground/70 text-base sm:text-lg font-light leading-relaxed mb-8 max-w-xl">
-            RecruitFlow delivers specialized permanent, contract, and executive recruitment solutions across Healthcare, Technology, Manufacturing, Finance, Construction, and Engineering.
-          </p>
-
-          {/* Primary and Secondary CTA Buttons */}
-          <div className="hero-cta flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full max-w-md mb-10">
-            <button
-              onClick={onNavigateCandidate}
-              className="flex-1 flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold text-sm tracking-tight shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer min-h-[44px]"
-            >
-              <Sparkles className="size-4 text-white" />
-              Submit Resume
-              <ArrowUpRight className="size-4 text-white" />
-            </button>
-            <button
-              onClick={onNavigateEmployer}
-              className="flex-1 flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-white hover:bg-muted text-foreground border border-border font-semibold text-sm tracking-tight transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer min-h-[44px]"
-            >
-              <Building2 className="size-4 text-secondary" />
-              Hire Talent
-            </button>
-          </div>
-
-          {/* Trust badges */}
-          <div className="hero-trust flex flex-wrap items-center gap-6 text-xs text-foreground/60 font-light pt-4 border-t border-border w-full max-w-xl">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="size-4 text-accent" />
-              <span>90-Day Retention Guarantee</span>
+        {/* Foreground Content */}
+        <div className="absolute inset-0 w-full h-full max-w-[1600px] mx-auto px-6 md:px-12 xl:px-24 flex items-center z-10 pointer-events-none">
+          <div ref={textRef} className="max-w-4xl pt-20">
+            {/* Tag */}
+            <div className="hero-tag inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-mono font-medium text-foreground mb-8">
+              <span className="flex size-2 rounded-full bg-accent animate-pulse shadow-[0_0_10px_rgba(22,163,74,0.8)]"></span>
+              Premier Executive Staffing
             </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="size-4 text-secondary" />
-              <span>Confidential Executive Search</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="size-4 text-primary" />
-              <span>100% Vetted Candidates</span>
-            </div>
+
+            {/* Massive Typography */}
+            <h1 className="hero-headline font-display font-bold text-5xl md:text-7xl lg:text-[100px] text-foreground tracking-tighter leading-[0.95] mb-8">
+              <div className="line overflow-hidden"><span className="block">Connecting</span></div>
+              <div className="line overflow-hidden"><span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">exceptional talent</span></div>
+              <div className="line overflow-hidden"><span className="block">with world-class</span></div>
+              <div className="line overflow-hidden"><span className="block">enterprises.</span></div>
+            </h1>
+
+            {/* Subheadline */}
+            <p className="hero-subheadline text-foreground/80 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
+              RecruitFlow delivers specialized permanent, contract, and executive recruitment solutions across Healthcare, Technology, Manufacturing, Finance, and Engineering.
+            </p>
           </div>
         </div>
 
-        {/* Corporate Workspace Visual Panel */}
-        <div className="hero-image-panel lg:col-span-5 relative w-full flex items-center justify-center">
-          <div className="relative w-full aspect-[4/5] rounded-[32px] overflow-hidden border border-border shadow-2xl">
-            {/* Status overlay */}
-            <div className="absolute top-6 left-6 z-20 flex items-center gap-2.5 px-4 py-2 rounded-full border border-border bg-white/80 backdrop-blur-md shadow-sm">
-              <span className="flex size-2 rounded-full bg-accent animate-ping"></span>
-              <p className="font-mono text-xs text-foreground font-semibold tracking-tight">Vetted Talent Database Active</p>
+        {/* Dual-CTA Block (Pinned to bottom right, inspired by doghouse.nl) */}
+        <div className="hero-cta-block absolute bottom-0 right-0 md:bottom-12 md:right-12 z-20 flex flex-col sm:flex-row shadow-2xl">
+          {/* For Employers */}
+          <button 
+            onClick={onNavigateEmployer}
+            className="group flex-1 sm:w-64 md:w-72 p-8 md:p-10 bg-primary hover:bg-primary/95 text-white text-left flex flex-col justify-between min-h-[220px] transition-colors border-r border-white/10 cursor-pointer focus:outline-none"
+          >
+            <div>
+              <div className="flex items-center gap-2 mb-6 text-white/70">
+                <Building2 className="size-4" />
+                <span className="text-[10px] uppercase tracking-widest font-mono font-semibold">For Companies</span>
+              </div>
+              <h3 className="font-display font-bold text-2xl md:text-3xl leading-tight">
+                Hire Top-Tier <br/>Professionals
+              </h3>
             </div>
-
-            {/* Corporate Staffing Image */}
-            <img 
-              src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" 
-              alt="RecruitFlow Corporate Recruitment Headquarters"
-              loading="lazy"
-              className="absolute inset-0 size-full object-cover scale-[1.01] hover:scale-105 transition-transform duration-[4000ms] ease-out-quint"
-            />
-
-            {/* Subtle Gradient Veil */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90"></div>
-
-            {/* Live Performance Panel */}
-            <div className="absolute bottom-6 left-6 right-6 z-20 p-5 rounded-2xl border border-border bg-white/90 backdrop-blur-md text-left shadow-lg">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-accent/10 text-accent">
-                  <TrendingUp className="size-5" />
-                </div>
-                <div>
-                  <h4 className="text-foreground font-bold text-sm">Rapid Executive & Specialist Search</h4>
-                  <p className="text-foreground/70 text-xs font-light mt-0.5">Average qualified shortlist presented in 48-72 hours.</p>
-                </div>
+            <div className="mt-8 flex justify-end">
+              <div className="size-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-primary transition-all duration-300">
+                <ArrowRight className="size-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </button>
 
-      {/* Prominent Agency Stats Bar */}
-      <div id="stats" className="hero-stats max-w-7xl mx-auto mt-20 pt-12 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-8 text-left">
-        {AGENCY_STATS.map((stat, idx) => (
-          <div key={idx} className="flex flex-col items-start text-left">
-            <span className="font-display font-bold text-3xl sm:text-4xl text-foreground tracking-tight leading-none mb-2">
-              {stat.value}
-            </span>
-            <span className="text-accent font-semibold text-xs tracking-tight uppercase mb-1">
-              {stat.label}
-            </span>
-            <span className="text-foreground/70 text-xs font-light max-w-[180px]">
-              {stat.desc}
-            </span>
-          </div>
-        ))}
-      </div>
-    </section>
+          {/* For Job Seekers */}
+          <button 
+            onClick={onNavigateCandidate}
+            className="group flex-1 sm:w-64 md:w-72 p-8 md:p-10 bg-accent hover:bg-accent/95 text-white text-left flex flex-col justify-between min-h-[220px] transition-colors cursor-pointer focus:outline-none"
+          >
+            <div>
+              <div className="flex items-center gap-2 mb-6 text-white/70">
+                <Sparkles className="size-4" />
+                <span className="text-[10px] uppercase tracking-widest font-mono font-semibold">For Job Seekers</span>
+              </div>
+              <h3 className="font-display font-bold text-2xl md:text-3xl leading-tight">
+                Find Your <br/>Dream Role
+              </h3>
+            </div>
+            <div className="mt-8 flex justify-end">
+              <div className="size-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-accent transition-all duration-300">
+                <ArrowRight className="size-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+              </div>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      {/* Prominent Agency Stats Bar - Moved directly below the new Hero */}
+      <section className="bg-background py-16 border-b border-border">
+        <div className="hero-stats max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 text-left">
+          {AGENCY_STATS.map((stat, idx) => (
+            <div key={idx} className="flex flex-col items-start text-left group">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <TrendingUp className="size-5" />
+                </div>
+                <span className="text-foreground/50 font-mono text-[10px] font-bold uppercase tracking-widest">Metric 0{idx + 1}</span>
+              </div>
+              <span className="font-display font-bold text-4xl sm:text-5xl text-foreground tracking-tight leading-none mb-3">
+                {stat.value}
+              </span>
+              <span className="text-primary font-semibold text-xs tracking-tight uppercase mb-2">
+                {stat.label}
+              </span>
+              <span className="text-foreground/70 text-xs font-light leading-relaxed max-w-[200px]">
+                {stat.desc}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
 
