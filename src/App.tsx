@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
-import Features from "./components/Features";
 import SocialProof from "./components/SocialProof";
 import ActivePositions from "./components/ActivePositions";
 import AboutPage from "./components/AboutPage";
