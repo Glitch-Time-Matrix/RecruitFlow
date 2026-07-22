@@ -45,7 +45,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col relative antialiased selection:bg-accent selection:text-white">
+    <div className="min-h-screen bg-background text-foreground flex flex-col relative antialiased selection:bg-accent selection:text-white overflow-x-hidden">
       
       {/* Header with full multi-page navigation */}
       <Header 

@@ -69,9 +69,9 @@ export default function Features() {
           </ul>
         </div>
 
-        <div className="flex min-h-[400px] w-full items-center justify-center py-10 relative">
+        <div className="flex min-h-[400px] w-full items-center justify-center py-10 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5 rounded-3xl blur-3xl -z-10"></div>
-          <div className="w-full max-w-md pl-4">
+          <div className="w-full max-w-md pl-4 overflow-hidden">
             <DisplayCards cards={featureCards} />
           </div>
         </div>
