@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
+import Features from "./components/Features";
+import Features from "./components/Features";
 import SocialProof from "./components/SocialProof";
 import ActivePositions from "./components/ActivePositions";
 import AboutPage from "./components/AboutPage";
@@ -13,7 +15,7 @@ import ContactPage from "./components/ContactPage";
 
 import { PageView, Job } from "./types";
 import { INITIAL_JOBS } from "./data";
-import { ShieldCheck, ArrowRight, Building2, Globe, Sparkles, UserCheck } from "lucide-react";
+import { ArrowRight, Globe, Sparkles } from "lucide-react";
 
 export default function App() {
   const [activePage, setActivePage] = useState<PageView>("home");
@@ -69,6 +71,11 @@ export default function App() {
               }}
               onNavigateEmployer={() => setActivePage("employers")}
             />
+
+            {/* Features */}
+            <div className="w-full">
+              <Features />
+            </div>
 
             {/* Featured Active Positions */}
             <ActivePositions 
