@@ -6,15 +6,15 @@
   --font-display: "Lexend", sans-serif;
   --font-mono: "Fira Code", monospace;
 
-  /* Trust & Authority Light Mode Palette */
-  --color-primary: #0369A1;
+  /* High-End Minimalist Palette (Cosmos-inspired) */
+  --color-primary: #0F172A; /* Slate 900 - dark, elegant */
   --color-on-primary: #FFFFFF;
-  --color-secondary: #0EA5E9;
+  --color-secondary: #0369A1; /* Brand Blue */
   --color-accent: #16A34A;
-  --color-background: #F0F9FF;
-  --color-foreground: #0C4A6E;
-  --color-muted: #E7EFF5;
-  --color-border: #BAE6FD;
+  --color-background: #FFFFFF; /* Pristine White */
+  --color-foreground: #0F172A; /* Crisp almost-black text */
+  --color-muted: #F8FAFC; /* Slate 50 for subtle sections */
+  --color-border: #E2E8F0; /* Slate 200 for clean lines */
   
   /* Retaining some old names strictly mapped to new values if existing components use them heavily, but we'll try to replace them all. */
   --color-brand-emerald: #16A34A; /* Accent */
