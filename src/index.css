@@ -99,6 +99,11 @@
   animation-play-state: paused;
 }
 
+/* Force pointer-events none on all canvases to prevent particle engines from intercepting clicks */
+canvas {
+  pointer-events: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee {
     animation: none;
