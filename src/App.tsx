@@ -14,7 +14,7 @@ import ContactPage from "./components/ContactPage";
 
 import { PageView, Job } from "./types";
 import { INITIAL_JOBS } from "./data";
-import { ArrowRight, Globe, Sparkles } from "lucide-react";
+import { ArrowRight, Globe, Sparkles, UserCheck, Building2, ShieldCheck } from "lucide-react";
 
 export default function App() {
   const [activePage, setActivePage] = useState<PageView>("home");
