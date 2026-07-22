@@ -27,7 +27,7 @@ export default function Hero({ onNavigateCandidate, onNavigateEmployer }: HeroPr
     <section ref={containerRef} className="relative w-full h-screen min-h-[700px] bg-white overflow-hidden flex flex-col items-center justify-center">
       
       {/* Sparkles Background */}
-      <div className="w-full absolute inset-0 h-screen z-0">
+      <div className="w-full absolute inset-0 h-screen z-0 pointer-events-none">
         <SparklesCore
           id="tsparticlesfullpage"
           background="transparent"
