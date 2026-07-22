@@ -43,7 +43,7 @@ export default function Header({
             <div className="absolute -inset-1 rounded-xl bg-gradient-to-tr from-primary to-secondary opacity-20 blur-sm animate-pulse group-hover:opacity-40 transition-opacity"></div>
           </div>
           <div className="flex flex-col">
-            <span className="font-display font-bold text-base sm:text-lg tracking-tight text-foreground leading-none">
+            <span className="font-display font-bold text-sm sm:text-base md:text-lg tracking-tight text-foreground leading-none">
               RECRUITFLOW
             </span>
             <span className="font-mono text-[9px] text-accent font-semibold uppercase tracking-widest mt-0.5">

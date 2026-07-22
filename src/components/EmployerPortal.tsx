@@ -104,7 +104,7 @@ export default function EmployerPortal() {
             <form onSubmit={handleGeneratePipeline} className="space-y-5">
               
               {/* Company Details */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-foreground/80 text-xs font-semibold mb-2">
                     Company Name

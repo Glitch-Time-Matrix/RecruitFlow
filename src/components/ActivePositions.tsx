@@ -94,7 +94,7 @@ export default function ActivePositions({ jobs, onSelectJobForMatching }: Active
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by keywords, technical skills, or criteria..."
-              className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-white border border-border text-foreground text-xs placeholder:text-foreground/50 focus:ring-2 focus:ring-accent/50 focus:border-transparent focus:outline-none transition-all duration-200 shadow-sm"
+              className="w-full pl-11 pr-4 py-3.5 md:py-2.5 rounded-xl bg-white border border-border text-foreground text-xs placeholder:text-foreground/50 focus:ring-2 focus:ring-accent/50 focus:border-transparent focus:outline-none transition-all duration-200 shadow-sm"
             />
           </div>
 
@@ -104,7 +104,7 @@ export default function ActivePositions({ jobs, onSelectJobForMatching }: Active
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-white border border-border text-foreground text-xs focus:ring-2 focus:ring-accent/50 focus:border-transparent focus:outline-none appearance-none cursor-pointer shadow-sm"
+              className="w-full pl-11 pr-4 py-3.5 md:py-2.5 rounded-xl bg-white border border-border text-foreground text-xs focus:ring-2 focus:ring-accent/50 focus:border-transparent focus:outline-none appearance-none cursor-pointer shadow-sm"
             >
               {DEPARTMENTS.map((dept, idx) => (
                 <option key={idx} value={dept}>{dept === "All" ? "All Departments" : dept}</option>
@@ -117,7 +117,7 @@ export default function ActivePositions({ jobs, onSelectJobForMatching }: Active
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-white border border-border text-foreground text-xs focus:ring-2 focus:ring-accent/50 focus:border-transparent focus:outline-none appearance-none cursor-pointer text-left shadow-sm"
+              className="w-full px-4 py-3.5 md:py-2.5 rounded-xl bg-white border border-border text-foreground text-xs focus:ring-2 focus:ring-accent/50 focus:border-transparent focus:outline-none appearance-none cursor-pointer text-left shadow-sm"
             >
               {TYPES.map((type, idx) => (
                 <option key={idx} value={type}>{type === "All" ? "All Placement Types" : type}</option>

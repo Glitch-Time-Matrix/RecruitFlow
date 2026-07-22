@@ -230,7 +230,7 @@ export default function CandidatePortal({ activeJobs }: CandidatePortalProps) {
               </div>
 
               {/* Target Settings */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="relative">
                   <label className="block text-foreground/80 text-xs font-semibold mb-2">
                     Target Sector

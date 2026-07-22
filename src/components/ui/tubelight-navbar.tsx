@@ -32,11 +32,11 @@ export function NavBar({ items, activeTab, setActiveTab, className }: NavBarProp
   return (
     <div
       className={cn(
-        "fixed bottom-0 sm:bottom-auto sm:top-0 left-1/2 -translate-x-1/2 z-50 mb-6 sm:pt-6 pointer-events-none",
+        "fixed bottom-0 sm:bottom-auto sm:top-0 left-1/2 -translate-x-1/2 z-50 mb-6 sm:pt-6 pointer-events-none w-full max-w-[95vw] sm:max-w-max",
         className,
       )}
     >
-      <div className="flex items-center gap-3 bg-white/80 border border-border backdrop-blur-lg py-1 px-1 rounded-full shadow-lg pointer-events-auto">
+      <div className="flex items-center gap-1 sm:gap-3 bg-white/80 border border-border backdrop-blur-lg py-1 px-1 rounded-full shadow-lg pointer-events-auto overflow-x-auto no-scrollbar max-w-full sm:overflow-visible">
         {items.map((item) => {
           const Icon = item.icon
           const isActive = activeTab === item.id
@@ -46,7 +46,7 @@ export function NavBar({ items, activeTab, setActiveTab, className }: NavBarProp
               key={item.name}
               onClick={() => setActiveTab(item.id)}
               className={cn(
-                "relative cursor-pointer text-sm font-semibold px-6 py-2 rounded-full transition-colors",
+                "relative cursor-pointer text-sm font-semibold px-4 sm:px-6 py-2 rounded-full transition-colors shrink-0",
                 "text-foreground/80 hover:text-primary focus:outline-none",
                 isActive && "text-primary",
               )}

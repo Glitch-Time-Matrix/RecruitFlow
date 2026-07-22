@@ -51,23 +51,23 @@ export default function Hero({ onNavigateCandidate, onNavigateEmployer }: HeroPr
         </span>
 
         {/* Massive Typography */}
-        <h1 className="hero-title font-display font-medium text-5xl sm:text-6xl md:text-7xl lg:text-[85px] text-foreground tracking-[-0.04em] leading-[1.05] mb-12">
+        <h1 className="hero-title font-display font-medium text-4xl sm:text-6xl md:text-7xl lg:text-[85px] text-foreground tracking-[-0.04em] leading-[1.05] mb-12">
           <div className="overflow-hidden pb-2"><span className="line block">Connecting exceptional</span></div>
           <div className="overflow-hidden pb-2"><span className="line block text-foreground/50">talent with world-class</span></div>
           <div className="overflow-hidden pb-2"><span className="line block">enterprises.</span></div>
         </h1>
 
         {/* Minimalist CTAs */}
-        <div className="hero-cta flex items-center justify-center gap-4">
+        <div className="hero-cta flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
           <button 
             onClick={onNavigateEmployer}
-            className="px-7 py-3.5 rounded-full bg-foreground text-background text-sm font-semibold tracking-tight hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-foreground/50 shadow-xl shadow-black/10 cursor-pointer"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-foreground text-background text-sm font-semibold tracking-tight hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-foreground/50 shadow-xl shadow-black/10 cursor-pointer"
           >
             Hire Talent
           </button>
           <button 
             onClick={onNavigateCandidate}
-            className="px-7 py-3.5 rounded-full bg-white border border-border text-foreground text-sm font-semibold tracking-tight hover:scale-105 hover:bg-muted transition-all duration-300 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-foreground/50 shadow-sm cursor-pointer"
+            className="w-full sm:w-auto justify-center px-7 py-3.5 rounded-full bg-white border border-border text-foreground text-sm font-semibold tracking-tight hover:scale-105 hover:bg-muted transition-all duration-300 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-foreground/50 shadow-sm cursor-pointer"
           >
             Submit Resume
             <ArrowUpRight className="size-3.5 text-foreground/50" />

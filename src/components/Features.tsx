@@ -22,7 +22,7 @@ export default function Features() {
       iconClassName: "text-primary",
       titleClassName: "text-primary",
       className:
-        "[grid-area:stack] translate-x-12 translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
+        "[grid-area:stack] max-sm:translate-x-4 max-sm:translate-y-4 sm:translate-x-12 sm:translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration-700 hover:grayscale-0 before:left-0 before:top-0",
     },
     {
       icon: <Building2 className="size-4 text-primary" />,
@@ -32,7 +32,7 @@ export default function Features() {
       iconClassName: "text-primary",
       titleClassName: "text-primary",
       className:
-        "[grid-area:stack] translate-x-24 translate-y-20 hover:translate-y-10",
+        "[grid-area:stack] max-sm:translate-x-8 max-sm:translate-y-8 sm:translate-x-24 sm:translate-y-20 hover:translate-y-10",
     },
   ];
 
