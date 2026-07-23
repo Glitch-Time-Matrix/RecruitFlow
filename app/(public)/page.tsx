@@ -1,75 +1,91 @@
-import Link from "next/link";
+"use client";
 
-/**
- * Phase 0 foundation page — temporary.
- * Confirms the Next.js + Tailwind + Supabase foundation is live.
- * Replaced by the migrated marketing home in Phase 1.
- */
+import { useRouter } from "next/navigation";
+import { ArrowRight, UserCheck, Building2, ShieldCheck } from "lucide-react";
+import Hero from "@/components/public/Hero";
+import Features from "@/components/public/Features";
+import ActivePositions from "@/components/public/ActivePositions";
+import SocialProof from "@/components/public/SocialProof";
+import { INITIAL_JOBS } from "@/lib/data";
+
 export default function HomePage() {
-  const supabaseConfigured =
-    Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
-    Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  const router = useRouter();
 
-  const checks = [
-    { label: "Next.js (App Router)", ok: true },
-    { label: "TypeScript", ok: true },
-    { label: "Tailwind CSS v4 + brand theme", ok: true },
-    { label: "Supabase environment keys", ok: supabaseConfigured },
-  ];
+  const goCandidateForJob = (jobTitle: string) => {
+    router.push(`/candidates?role=${encodeURIComponent(jobTitle)}`);
+  };
 
   return (
-    <main className="flex flex-1 items-center justify-center px-6 py-24">
-      <div className="w-full max-w-2xl text-center">
-        <div className="mx-auto mb-8 flex size-12 items-center justify-center rounded-xl bg-primary text-2xl font-bold text-white shadow-sm select-none">
-          Ω
-        </div>
-        <span className="font-mono text-xs font-semibold uppercase tracking-widest text-accent">
-          Phase 0 · Foundation Live
-        </span>
-        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          RecruitFlow RMS
-        </h1>
-        <p className="mx-auto mt-4 max-w-md text-sm font-light leading-relaxed text-foreground/70">
-          The Next.js + Supabase foundation is running. The approved public site is
-          migrated in Phase 1; the internal dashboard is built from Phase 4.
-        </p>
+    <div className="w-full flex flex-col items-center">
+      {/* Hero Section */}
+      <Hero
+        onNavigateCandidate={() => router.push("/candidates")}
+        onNavigateEmployer={() => router.push("/employers")}
+      />
 
-        <div className="mx-auto mt-10 max-w-sm space-y-2 text-left">
-          {checks.map((c) => (
-            <div
-              key={c.label}
-              className="flex items-center justify-between rounded-xl border border-border bg-muted/50 px-4 py-3 text-xs"
-            >
-              <span className="font-medium text-foreground">{c.label}</span>
-              <span
-                className={
-                  c.ok
-                    ? "font-semibold text-accent"
-                    : "font-semibold text-foreground/40"
-                }
-              >
-                {c.ok ? "Ready" : "Add keys"}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {!supabaseConfigured && (
-          <p className="mx-auto mt-6 max-w-sm text-[11px] font-light leading-relaxed text-foreground/50">
-            Add your Supabase keys to <code className="font-mono">.env.local</code>{" "}
-            (see <code className="font-mono">.env.example</code>) to complete the connection.
-          </p>
-        )}
-
-        <div className="mt-10">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center rounded-xl border border-border bg-white px-5 py-2.5 text-xs font-semibold text-foreground shadow-sm transition-colors hover:bg-muted"
-          >
-            View dashboard placeholder →
-          </Link>
-        </div>
+      {/* Features */}
+      <div className="w-full">
+        <Features />
       </div>
-    </main>
+
+      {/* Featured Active Positions */}
+      <ActivePositions jobs={INITIAL_JOBS} onSelectJobForMatching={goCandidateForJob} />
+
+      {/* Quick Agency Highlights */}
+      <section className="py-20 px-6 w-full bg-white border-b border-border">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+          <div
+            className="p-8 rounded-3xl bg-white border border-border shadow-sm hover:shadow-md transition-shadow duration-300 space-y-3 group cursor-pointer"
+            onClick={() => router.push("/candidates")}
+          >
+            <div className="size-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+              <UserCheck className="size-5" />
+            </div>
+            <h3 className="font-display font-bold text-lg text-foreground">For Candidates</h3>
+            <p className="text-foreground/70 text-xs font-light leading-relaxed">
+              Submit your resume confidentially to be matched with unlisted executive and technical opportunities across top corporate employers.
+            </p>
+            <button className="text-xs text-accent hover:underline font-semibold pt-2 flex items-center gap-1 group-hover:gap-2 transition-all">
+              Candidate Portal <ArrowRight className="size-3" />
+            </button>
+          </div>
+
+          <div
+            className="p-8 rounded-3xl bg-white border border-border shadow-sm hover:shadow-md transition-shadow duration-300 space-y-3 group cursor-pointer"
+            onClick={() => router.push("/employers")}
+          >
+            <div className="size-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center">
+              <Building2 className="size-5" />
+            </div>
+            <h3 className="font-display font-bold text-lg text-foreground">For Employers</h3>
+            <p className="text-foreground/70 text-xs font-light leading-relaxed">
+              Request executive headhunting, contract staffing, or bulk volume hiring with an average 48-72 hour vetted shortlist delivery.
+            </p>
+            <button className="text-xs text-secondary hover:underline font-semibold pt-2 flex items-center gap-1 group-hover:gap-2 transition-all">
+              Employer Portal <ArrowRight className="size-3" />
+            </button>
+          </div>
+
+          <div
+            className="p-8 rounded-3xl bg-white border border-border shadow-sm hover:shadow-md transition-shadow duration-300 space-y-3 group cursor-pointer"
+            onClick={() => router.push("/about")}
+          >
+            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <ShieldCheck className="size-5" />
+            </div>
+            <h3 className="font-display font-bold text-lg text-foreground">Guaranteed Retention</h3>
+            <p className="text-foreground/70 text-xs font-light leading-relaxed">
+              Every permanent placement is backed by our 90-day replacement policy to ensure complete peace of mind for hiring leaders.
+            </p>
+            <button className="text-xs text-primary hover:underline font-semibold pt-2 flex items-center gap-1 group-hover:gap-2 transition-all">
+              About Our Agency <ArrowRight className="size-3" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof & Testimonial Carousel */}
+      <SocialProof />
+    </div>
   );
 }
