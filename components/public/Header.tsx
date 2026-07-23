@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
-import { Sparkles, Building2, Home, Info, Briefcase, Users, Phone } from "lucide-react";
+import { Building2, Home, Info, Briefcase, Users, Phone } from "lucide-react";
 import { NavBar } from "@/components/public/ui/tubelight-navbar";
 import { BRAND } from "@/lib/brand";
 
@@ -72,24 +72,6 @@ export default function Header() {
             </span>
           </div>
         </button>
-
-        {/* Action CTA Buttons */}
-        <div className="hidden sm:flex items-center gap-2.5">
-          <button
-            onClick={() => handleNavClick("candidates")}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-muted text-foreground border border-border text-xs font-semibold tracking-tight transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer"
-          >
-            <Sparkles className="size-3.5 text-accent" />
-            Submit Resume
-          </button>
-          <button
-            onClick={() => handleNavClick("employers")}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-semibold text-xs tracking-tight shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent/50 cursor-pointer"
-          >
-            <Building2 className="size-3.5" />
-            Hire Talent
-          </button>
-        </div>
       </header>
 
       {/* Tubelight Floating Navbar */}
