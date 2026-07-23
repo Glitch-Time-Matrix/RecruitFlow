@@ -62,7 +62,13 @@ Each feature is written as: **what it does → how it works → what's reused vs
 - **How:** list uses server-side search (FTS + trigram) and filters (country, experience, skills,
   recruiter, status, industry) with cursor pagination. Profile aggregates the candidate + related
   tables. Status changes and notes write `activities` rows for the timeline.
-- **Client-specific:** the **photo-first** layout — recruiters recognize people visually.
+- **Client-specific — dual view with a toggle** (⊞ grid / ☰ list), like top-tier RMS products:
+  - **Card / grid view (default):** photo-forward — candidate **photo + full name** lead, plus current
+    title, status badge, and key tags. Built for visual recognition.
+  - **Table / list view:** dense, sortable rows — small avatar + name, then columns for status,
+    experience, location, key skills, assigned recruiter, last updated, and row actions.
+  - Chosen view is persisted; both share the same search + filters. Photos are served via signed URL
+    from the private `candidate-photos` bucket.
 - **New.**
 
 ### D4. Employer management
