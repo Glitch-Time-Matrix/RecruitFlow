@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Building2, Upload, CheckCircle2, User, FileText, DollarSign, Clock, ShieldCheck, AlertCircle } from "lucide-react";
 import { EmployerHiringRequest } from "@/lib/types";
+import { submitEmployer } from "@/lib/actions/intake";
 
 interface EmployerHiringRequestFormProps {
   onSuccess?: () => void;
@@ -36,6 +37,8 @@ export default function EmployerHiringRequestForm({ onSuccess }: EmployerHiringR
   const [submitting, setSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<{ success: boolean; id?: string; message?: string } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [jdFile, setJdFile] = useState<File | null>(null);
+  const [honeypot, setHoneypot] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -59,11 +62,8 @@ export default function EmployerHiringRequestForm({ onSuccess }: EmployerHiringR
   };
 
   const simulateFileUpload = (file: File) => {
-    setUploading(true);
-    setTimeout(() => {
-      setFormData((prev) => ({ ...prev, jdFileName: file.name }));
-      setUploading(false);
-    }, 1200);
+    setJdFile(file);
+    setFormData((prev) => ({ ...prev, jdFileName: file.name }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,33 +78,23 @@ export default function EmployerHiringRequestForm({ onSuccess }: EmployerHiringR
     setSubmitting(true);
 
     try {
-      const response = await fetch("/api/employers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const fd = new FormData();
+      const { jdFileName, ...fields } = formData;
+      void jdFileName;
+      Object.entries(fields).forEach(([k, v]) => fd.append(k, String(v ?? "")));
+      if (jdFile) fd.append("jd", jdFile);
+      fd.append("company_website_confirm", honeypot);
 
-      const data = await response.json();
+      const result = await submitEmployer(fd);
 
-      if (response.ok && data.success) {
-        setSubmissionResult({
-          success: true,
-          id: data.requestId,
-          message: data.message || "Hiring request registered with our executive search division.",
-        });
+      if (result.success) {
+        setSubmissionResult({ success: true, id: result.reference, message: result.message });
         if (onSuccess) onSuccess();
       } else {
-        setErrorMessage(data.error || "Failed to submit hiring request.");
+        setErrorMessage(result.error);
       }
     } catch (err) {
-      // Fallback local response
-      const mockId = `HIRING-${Math.floor(Math.random() * 900000 + 100000)}`;
-      setSubmissionResult({
-        success: true,
-        id: mockId,
-        message: "Your hiring requirement has been submitted. An account executive will contact you shortly.",
-      });
-      if (onSuccess) onSuccess();
+      setErrorMessage("Something went wrong submitting your request. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -158,6 +148,21 @@ export default function EmployerHiringRequestForm({ onSuccess }: EmployerHiringR
 
   return (
     <form onSubmit={handleSubmit} className="p-6 sm:p-10 rounded-3xl bg-white border border-border text-left space-y-10 shadow-md">
+      {/* Honeypot: hidden from real users; bots that fill it are silently dropped */}
+      <div className="hidden" aria-hidden="true">
+        <label>
+          Do not fill this field
+          <input
+            type="text"
+            name="company_website_confirm"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </label>
+      </div>
+
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Building2 className="size-4 text-primary" />
@@ -479,7 +484,7 @@ export default function EmployerHiringRequestForm({ onSuccess }: EmployerHiringR
               </div>
               <button
                 type="button"
-                onClick={(e) => { e.stopPropagation(); setFormData((prev) => ({ ...prev, jdFileName: "" }))}}
+                onClick={(e) => { e.stopPropagation(); setJdFile(null); setFormData((prev) => ({ ...prev, jdFileName: "" }))}}
                 className="text-xs text-red-600 hover:underline cursor-pointer focus:outline-none"
               >
                 Remove File

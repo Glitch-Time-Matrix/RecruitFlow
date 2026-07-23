@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Building2 } from "lucide-react";
 import { ContactInquiry } from "@/lib/types";
+import { submitContact } from "@/lib/actions/intake";
 
 export default function GeneralContactForm() {
   const [formData, setFormData] = useState<ContactInquiry>({
@@ -16,6 +17,7 @@ export default function GeneralContactForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<{ success: boolean; id?: string; message?: string } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [honeypot, setHoneypot] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -34,30 +36,19 @@ export default function GeneralContactForm() {
     setSubmitting(true);
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const fd = new FormData();
+      Object.entries(formData).forEach(([k, v]) => fd.append(k, String(v ?? "")));
+      fd.append("company_website", honeypot);
 
-      const data = await response.json();
+      const result = await submitContact(fd);
 
-      if (response.ok && data.success) {
-        setSubmissionResult({
-          success: true,
-          id: data.messageId,
-          message: data.message || "Thank you for reaching out. A representative will contact you within 24 hours.",
-        });
+      if (result.success) {
+        setSubmissionResult({ success: true, id: result.reference, message: result.message });
       } else {
-        setErrorMessage(data.error || "Failed to submit contact inquiry.");
+        setErrorMessage(result.error);
       }
     } catch (err) {
-      const mockId = `MSG-${Math.floor(Math.random() * 900000 + 100000)}`;
-      setSubmissionResult({
-        success: true,
-        id: mockId,
-        message: "Your message has been dispatched to our communications team.",
-      });
+      setErrorMessage("Something went wrong submitting your message. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -94,6 +85,21 @@ export default function GeneralContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-white border border-border text-left space-y-6 shadow-md">
+      {/* Honeypot: hidden from real users; bots that fill it are silently dropped */}
+      <div className="hidden" aria-hidden="true">
+        <label>
+          Company Website
+          <input
+            type="text"
+            name="company_website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </label>
+      </div>
+
       <div>
         <h3 className="font-display font-bold text-2xl text-foreground tracking-tight">
           Send Us a Direct Inquiry

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Sparkles, Upload, CheckCircle2, User, Briefcase, GraduationCap, Award, MapPin, DollarSign, Shield, FileText, AlertCircle } from "lucide-react";
 import { CandidateRegistration } from "@/lib/types";
+import { submitCandidate } from "@/lib/actions/intake";
 
 interface CandidateRegistrationFormProps {
   prefilledJobTitle?: string;
@@ -39,6 +40,10 @@ export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess
   const [submitting, setSubmitting] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<{ success: boolean; id?: string; message?: string } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string>("");
+  const [honeypot, setHoneypot] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -67,11 +72,22 @@ export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess
   };
 
   const simulateFileUpload = (file: File) => {
-    setUploading(true);
-    setTimeout(() => {
-      setFormData((prev) => ({ ...prev, resumeFileName: file.name }));
-      setUploading(false);
-    }, 1200);
+    setResumeFile(file);
+    setFormData((prev) => ({ ...prev, resumeFileName: file.name }));
+  };
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhotoFile(f);
+    setPhotoPreview(URL.createObjectURL(f));
+  };
+
+  const clearPhoto = () => {
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhotoFile(null);
+    setPhotoPreview("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,33 +107,25 @@ export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess
     setSubmitting(true);
 
     try {
-      const response = await fetch("/api/candidates", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const fd = new FormData();
+      const { resumeFileName, declarationConsent, ...fields } = formData;
+      void resumeFileName;
+      Object.entries(fields).forEach(([k, v]) => fd.append(k, String(v ?? "")));
+      fd.append("declarationConsent", declarationConsent ? "true" : "");
+      if (resumeFile) fd.append("resume", resumeFile);
+      if (photoFile) fd.append("photo", photoFile);
+      fd.append("company_website", honeypot);
 
-      const data = await response.json();
+      const result = await submitCandidate(fd);
 
-      if (response.ok && data.success) {
-        setSubmissionResult({
-          success: true,
-          id: data.registrationId,
-          message: data.message || "Your profile has been registered securely.",
-        });
+      if (result.success) {
+        setSubmissionResult({ success: true, id: result.reference, message: result.message });
         if (onSuccess) onSuccess();
       } else {
-        setErrorMessage(data.error || "Failed to submit candidate profile.");
+        setErrorMessage(result.error);
       }
     } catch (err) {
-      // Fallback local registration
-      const mockId = `CAND-${Math.floor(Math.random() * 900000 + 100000)}`;
-      setSubmissionResult({
-        success: true,
-        id: mockId,
-        message: "Your profile has been received and indexed into our candidate database.",
-      });
-      if (onSuccess) onSuccess();
+      setErrorMessage("Something went wrong submitting your profile. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -171,6 +179,21 @@ export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess
 
   return (
     <form onSubmit={handleSubmit} className="p-6 sm:p-10 rounded-3xl bg-white border border-border text-left space-y-10 shadow-md">
+      {/* Honeypot: hidden from real users; bots that fill it are silently dropped */}
+      <div className="hidden" aria-hidden="true">
+        <label>
+          Company Website
+          <input
+            type="text"
+            name="company_website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </label>
+      </div>
+
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="size-4 text-primary" />
@@ -504,11 +527,43 @@ export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess
         </div>
       </div>
 
-      {/* SECTION 5: Resume Upload */}
+      {/* SECTION 5: Documents & Photo */}
       <div className="space-y-4 pt-6 border-t border-border">
         <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
           <FileText className="size-4 text-primary" />
-          <span>5. Resume / CV Document Upload</span>
+          <span>5. Resume / CV & Profile Photo</span>
+        </div>
+
+        {/* Profile Photo (helps recruiters identify candidates visually) */}
+        <div className="p-4 rounded-2xl bg-background border border-border">
+          <label className="block text-foreground/80 text-xs font-semibold mb-1">Profile Photo (Optional)</label>
+          <p className="text-[11px] text-foreground/50 mb-3">Helps our recruiters recognize you. JPG, PNG, or WebP up to 5MB.</p>
+          <div className="flex items-center gap-4">
+            {photoPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photoPreview} alt="Profile preview" className="size-16 rounded-full object-cover border border-border shadow-sm" />
+            ) : (
+              <div className="size-16 rounded-full bg-muted border border-border flex items-center justify-center text-foreground/30">
+                <User className="size-7" />
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              <label className="inline-flex items-center px-4 py-2 rounded-xl bg-muted hover:bg-muted/80 text-xs font-semibold text-foreground cursor-pointer transition-colors shadow-sm focus-within:ring-2 focus-within:ring-primary/50">
+                {photoFile ? "Change Photo" : "Upload Photo"}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handlePhotoSelect}
+                  className="hidden"
+                />
+              </label>
+              {photoFile && (
+                <button type="button" onClick={clearPhoto} className="text-xs text-red-600 hover:underline cursor-pointer focus:outline-none">
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div
@@ -539,7 +594,7 @@ export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess
               </div>
               <button
                 type="button"
-                onClick={(e) => { e.stopPropagation(); setFormData((prev) => ({ ...prev, resumeFileName: "" }))}}
+                onClick={(e) => { e.stopPropagation(); setResumeFile(null); setFormData((prev) => ({ ...prev, resumeFileName: "" }))}}
                 className="text-xs text-red-600 hover:underline cursor-pointer focus:outline-none"
               >
                 Change File
