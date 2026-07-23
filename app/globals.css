@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --font-sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
+  --font-display: "Lexend", sans-serif;
+  --font-mono: "Fira Code", monospace;
+
+  /* High-End Minimalist Palette (Cosmos-inspired) — approved brand tokens */
+  --color-primary: #0F172A;        /* Slate 900 — dark, elegant */
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #0369A1;      /* Brand Blue */
+  --color-accent: #16A34A;         /* Brand Green */
+  --color-background: #FFFFFF;      /* Pristine White */
+  --color-foreground: #0F172A;     /* Crisp almost-black text */
+  --color-muted: #F8FAFC;          /* Slate 50 for subtle sections */
+  --color-border: #E2E8F0;         /* Slate 200 for clean lines */
+
+  --color-brand-emerald: #16A34A;
+  --color-brand-teal: #0EA5E9;
+  --color-brand-slate: #0369A1;
+}
+
+@layer base {
+  html {
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom subtle scrollbar for light mode */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 1.5rem;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secondary);
+  }
+}
+
+/* Custom premium design utilities */
+.glow-effect {
+  position: relative;
+}
+
+.glow-effect::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.4), rgba(3, 105, 161, 0.1), rgba(255, 255, 255, 0.5));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.radial-fade {
+  mask-image: radial-gradient(circle 50% 50% at 50% 50%, black 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle 50% 50% at 50% 50%, black 60%, transparent 100%);
+}
+
+/* Continuous looping text marquee for premium clients section */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Force pointer-events none on all canvases to prevent particle engines from intercepting clicks */
+canvas {
+  pointer-events: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee { animation: none; }
+}
+
+/* Shimmer pulse effect for matching states */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.02); }
+}
+
+.pulse-glow-bg {
+  animation: pulse-glow 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-glow-bg { animation: none; opacity: 0.2; }
+}

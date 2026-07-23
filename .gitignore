@@ -4,5 +4,16 @@ dist/
 coverage/
 .DS_Store
 *.log
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Env files (all secrets stay local)
 .env*
 !.env.example
+
+# Vercel
+.vercel
