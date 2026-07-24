@@ -167,35 +167,43 @@ export function CandidateListView({
           </p>
         </div>
       ) : view === "grid" ? (
-        /* ── CARD / GRID VIEW (photo-forward) ── */
+        /* ── CARD / GRID VIEW (social-style, photo-forward) ── */
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((c) => (
             <Link
               key={c.id}
               href={`/dashboard/candidates/${c.id}`}
-              className="group flex flex-col items-center rounded-2xl border border-border bg-white p-6 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-white text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
             >
-              <CandidateAvatar item={c} size="lg" />
-              <h3 className="mt-4 line-clamp-1 font-display text-base font-bold text-foreground group-hover:text-primary">
-                {c.full_name}
-              </h3>
-              <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
-                {c.current_title || c.target_role || "—"}
-              </p>
-              <div className="mt-3">
-                <CandidateStatusBadge status={c.status} />
-              </div>
-              <div className="mt-4 flex flex-wrap justify-center gap-1.5">
-                {c.total_experience && (
-                  <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-foreground/70">
-                    {c.total_experience}
-                  </span>
-                )}
-                {c.location && (
-                  <span className="line-clamp-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-foreground/70">
-                    {c.location}
-                  </span>
-                )}
+              {/* Mini cover band */}
+              <div className="h-16 bg-gradient-to-r from-primary via-primary/85 to-secondary" />
+              <div className="flex flex-col items-center px-6 pb-6">
+                <div className="-mt-12">
+                  <div className="rounded-full border-4 border-white bg-white shadow-sm">
+                    <CandidateAvatar item={c} size="lg" />
+                  </div>
+                </div>
+                <h3 className="mt-3 line-clamp-1 font-display text-base font-bold text-foreground group-hover:text-primary">
+                  {c.full_name}
+                </h3>
+                <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+                  {c.current_title || c.target_role || "—"}
+                </p>
+                <div className="mt-3">
+                  <CandidateStatusBadge status={c.status} />
+                </div>
+                <div className="mt-4 flex flex-wrap justify-center gap-1.5">
+                  {c.total_experience && (
+                    <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-foreground/70">
+                      {c.total_experience}
+                    </span>
+                  )}
+                  {c.location && (
+                    <span className="line-clamp-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-foreground/70">
+                      {c.location}
+                    </span>
+                  )}
+                </div>
               </div>
             </Link>
           ))}

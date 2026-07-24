@@ -36,6 +36,52 @@ export const candidateIntakeSchema = z.object({
     }),
 });
 
+/**
+ * Dashboard candidate schema — used when a recruiter adds/edits a candidate
+ * manually (e.g. an office walk-in). Same fields as the public intake, but the
+ * declaration-consent checkbox is not required (the recruiter records consent
+ * out-of-band). Everything else mirrors `candidateIntakeSchema`.
+ */
+export const candidateManageSchema = candidateIntakeSchema
+  .omit({ declarationConsent: true })
+  .extend({
+    status: z
+      .enum([
+        "new",
+        "screening",
+        "shortlisted",
+        "submitted",
+        "interviewing",
+        "offered",
+        "placed",
+        "rejected",
+        "on_hold",
+      ])
+      .default("new"),
+  });
+
+/** One structured work-experience entry (for the résumé + profile). */
+export const experienceEntrySchema = z.object({
+  title: z.string().trim().max(200).optional().or(z.literal("")),
+  company: z.string().trim().max(200).optional().or(z.literal("")),
+  startDate: z.string().trim().max(20).optional().or(z.literal("")),
+  endDate: z.string().trim().max(20).optional().or(z.literal("")),
+  isCurrent: z.boolean().optional().default(false),
+  description: z.string().trim().max(4000).optional().or(z.literal("")),
+});
+
+/** One structured education entry. */
+export const educationEntrySchema = z.object({
+  degree: z.string().trim().max(200).optional().or(z.literal("")),
+  fieldOfStudy: z.string().trim().max(200).optional().or(z.literal("")),
+  institution: z.string().trim().max(200).optional().or(z.literal("")),
+  graduationYear: z.string().trim().max(20).optional().or(z.literal("")),
+});
+
+export type CandidateManage = z.infer<typeof candidateManageSchema>;
+export type ExperienceEntry = z.infer<typeof experienceEntrySchema>;
+export type EducationEntry = z.infer<typeof educationEntrySchema>;
+
 export const employerIntakeSchema = z.object({
   companyName: z.string().trim().min(1, "Company name is required").max(200),
   industry: optionalText,
@@ -57,6 +103,25 @@ export const employerIntakeSchema = z.object({
   urgencyTimeline: optionalText,
   additionalNotes: optionalText,
 });
+
+/**
+ * Dashboard employer schema — recruiter adds/edits a company + its primary
+ * contact. The hiring-request fields from the public form are optional here
+ * (a manually-added employer may not have an open role yet).
+ */
+export const employerManageSchema = z.object({
+  companyName: z.string().trim().min(1, "Company name is required").max(200),
+  industry: optionalText,
+  companyScale: optionalText,
+  websiteUrl: z.string().trim().max(500).optional().or(z.literal("")),
+  status: z.enum(["prospect", "active", "inactive"]).default("prospect"),
+  contactName: optionalText,
+  designation: optionalText,
+  contactEmail: z.string().trim().max(320).optional().or(z.literal("")),
+  contactPhone: optionalText,
+});
+
+export type EmployerManage = z.infer<typeof employerManageSchema>;
 
 export const contactIntakeSchema = z.object({
   fullName: z.string().trim().min(1, "Full name is required").max(200),

@@ -7,15 +7,16 @@ import {
   MapPin,
   Linkedin,
   Briefcase,
-  GraduationCap,
   Award,
-  Clock,
+  Pencil,
   DollarSign,
 } from "lucide-react";
 import { getCandidate } from "@/lib/db/candidates";
 import { CandidateStatusBadge } from "@/components/dashboard/StatusBadge";
 import { DocumentManager } from "@/components/dashboard/candidates/DocumentManager";
+import { ExperienceEditor, EducationEditor } from "@/components/dashboard/candidates/ExperienceEditor";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 export const metadata = { title: "Candidate" };
 
@@ -61,28 +62,47 @@ export default async function CandidateDetailPage({
         <ArrowLeft className="size-3.5" /> Back to candidates
       </Link>
 
-      {/* Header */}
-      <div className="flex flex-col items-start gap-5 rounded-2xl border border-border bg-white p-6 shadow-sm sm:flex-row sm:items-center">
-        <Avatar className="size-24 border border-border">
-          {candidate.photoUrl && (
-            <AvatarImage src={candidate.photoUrl} alt={candidate.full_name} className="object-cover" />
-          )}
-          <AvatarFallback className="bg-primary/90 text-2xl font-semibold text-white">
-            {initials(candidate.full_name)}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
-              {candidate.full_name}
-            </h1>
-            <CandidateStatusBadge status={candidate.status} />
+      {/* ── Social-style profile header ── */}
+      <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+        {/* Cover band */}
+        <div className="h-28 bg-gradient-to-r from-primary via-primary/85 to-secondary sm:h-32" />
+        <div className="px-6 pb-6 sm:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-end">
+              {/* Large avatar overlapping the cover */}
+              <Avatar className="-mt-14 size-28 border-4 border-white shadow-md sm:-mt-16 sm:size-32">
+                {candidate.photoUrl && (
+                  <AvatarImage src={candidate.photoUrl} alt={candidate.full_name} className="object-cover" />
+                )}
+                <AvatarFallback className="bg-primary/90 text-4xl font-semibold text-white">
+                  {initials(candidate.full_name)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="pb-1 text-center sm:pb-2 sm:text-left">
+                <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                  <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                    {candidate.full_name}
+                  </h1>
+                  <CandidateStatusBadge status={candidate.status} />
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {candidate.current_title || candidate.target_role || "Candidate"}
+                  {candidate.current_employer ? ` · ${candidate.current_employer}` : ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-center sm:justify-end">
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/dashboard/candidates/${candidate.id}/edit`}>
+                  <Pencil /> Edit profile
+                </Link>
+              </Button>
+            </div>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {candidate.current_title || candidate.target_role || "Candidate"}
-            {candidate.current_employer ? ` · ${candidate.current_employer}` : ""}
-          </p>
-          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-foreground/70">
+
+          {/* Contact row */}
+          <div className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-foreground/70 sm:justify-start">
             {candidate.email && (
               <a href={`mailto:${candidate.email}`} className="flex items-center gap-1.5 hover:text-primary">
                 <Mail className="size-3.5" /> {candidate.email}
@@ -131,17 +151,9 @@ export default async function CandidateDetailPage({
             </dl>
           </section>
 
-          <section className="rounded-2xl border border-border bg-white p-6 shadow-sm">
-            <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-bold text-foreground">
-              <GraduationCap className="size-4 text-secondary" /> Education
-            </h2>
-            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field label="Highest Degree" value={candidate.highest_degree} />
-              <Field label="Field of Study" value={candidate.field_of_study} />
-              <Field label="University" value={candidate.university} />
-              <Field label="Graduation Year" value={candidate.graduation_year} />
-            </dl>
-          </section>
+          {/* Structured experience & education (feed the résumé) */}
+          <ExperienceEditor candidateId={candidate.id} experience={candidate.experience} />
+          <EducationEditor candidateId={candidate.id} education={candidate.education} />
 
           <section className="rounded-2xl border border-border bg-white p-6 shadow-sm">
             <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-bold text-foreground">
@@ -152,15 +164,6 @@ export default async function CandidateDetailPage({
               <Field label="Secondary Skills" value={candidate.secondary_skills} />
               <Field label="Certifications" value={candidate.certifications} />
             </dl>
-          </section>
-
-          {/* Notes & activity — coming in the next iteration */}
-          <section className="rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center">
-            <Clock className="mx-auto mb-2 size-5 text-muted-foreground/50" />
-            <p className="text-sm font-semibold text-foreground">Notes & Activity Timeline</p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Recruiter notes, status history, and the activity timeline arrive in the next phase.
-            </p>
           </section>
         </div>
 

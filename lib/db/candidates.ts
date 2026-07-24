@@ -13,6 +13,8 @@ export type CandidateListItem = CandidateRow & { photoUrl: string | null };
 export type CandidateDetail = CandidateRow & {
   photoUrl: string | null;
   documents: (DocumentRow & { url: string | null })[];
+  experience: Database["public"]["Tables"]["candidate_experience"]["Row"][];
+  education: Database["public"]["Tables"]["candidate_education"]["Row"][];
 };
 
 export type CandidateListParams = {
@@ -86,12 +88,25 @@ export async function getCandidate(id: string): Promise<CandidateDetail | null> 
     .maybeSingle();
   if (!candidate) return null;
 
-  const { data: docs } = await supabase
-    .from("documents")
-    .select("*")
-    .eq("owner_type", "candidate")
-    .eq("owner_id", id)
-    .order("created_at", { ascending: false });
+  const [{ data: docs }, { data: experience }, { data: education }] = await Promise.all([
+    supabase
+      .from("documents")
+      .select("*")
+      .eq("owner_type", "candidate")
+      .eq("owner_id", id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("candidate_experience")
+      .select("*")
+      .eq("candidate_id", id)
+      .order("is_current", { ascending: false })
+      .order("start_date", { ascending: false, nullsFirst: false }),
+    supabase
+      .from("candidate_education")
+      .select("*")
+      .eq("candidate_id", id)
+      .order("graduation_year", { ascending: false, nullsFirst: false }),
+  ]);
 
   const documents = docs ?? [];
 
@@ -108,7 +123,13 @@ export async function getCandidate(id: string): Promise<CandidateDetail | null> 
     ? withUrls.find((d) => d.id === photoDoc.id)?.url ?? null
     : null;
 
-  return { ...candidate, photoUrl, documents: withUrls };
+  return {
+    ...candidate,
+    photoUrl,
+    documents: withUrls,
+    experience: experience ?? [],
+    education: education ?? [],
+  };
 }
 
 /**

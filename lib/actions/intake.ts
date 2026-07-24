@@ -1,7 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { Database } from "@/lib/database.types";
+import { uploadDocument } from "@/lib/storage";
 import {
   candidateIntakeSchema,
   employerIntakeSchema,
@@ -12,9 +12,6 @@ import {
 export type IntakeResult =
   | { success: true; reference: string; message: string }
   | { success: false; error: string };
-
-type DocumentKind = Database["public"]["Enums"]["document_kind"];
-type DocumentOwnerType = Database["public"]["Enums"]["document_owner_type"];
 
 /** Turn a FormData string field into a plain string. */
 function str(fd: FormData, key: string): string {
@@ -36,54 +33,6 @@ function checkFile(
   if (f.size > rules.maxBytes) return rules.label;
   if (f.type && !rules.mimes.includes(f.type)) return rules.label;
   return null;
-}
-
-/**
- * Upload a file to a private bucket and create its `documents` metadata row.
- * Runs under the service role (RLS-bypassing), only from trusted server code.
- */
-async function uploadDocument(
-  admin: ReturnType<typeof createAdminClient>,
-  opts: {
-    f: File;
-    bucket: string;
-    kind: DocumentKind;
-    ownerType: DocumentOwnerType;
-    ownerId: string;
-    isConfidential?: boolean;
-  },
-): Promise<string> {
-  const ext = opts.f.name.includes(".")
-    ? opts.f.name.split(".").pop()!.toLowerCase().slice(0, 10)
-    : "bin";
-  const path = `${opts.ownerId}/${crypto.randomUUID()}.${ext}`;
-  const bytes = Buffer.from(await opts.f.arrayBuffer());
-
-  const { error: upErr } = await admin.storage
-    .from(opts.bucket)
-    .upload(path, bytes, {
-      contentType: opts.f.type || "application/octet-stream",
-      upsert: false,
-    });
-  if (upErr) throw new Error(`Storage upload failed: ${upErr.message}`);
-
-  const { data, error } = await admin
-    .from("documents")
-    .insert({
-      kind: opts.kind,
-      storage_bucket: opts.bucket,
-      storage_path: path,
-      file_name: opts.f.name,
-      mime_type: opts.f.type || null,
-      size_bytes: opts.f.size,
-      owner_type: opts.ownerType,
-      owner_id: opts.ownerId,
-      is_confidential: opts.isConfidential ?? false,
-    })
-    .select("id")
-    .single();
-  if (error) throw new Error(`Document record failed: ${error.message}`);
-  return data.id;
 }
 
 /** Short human-facing reference derived from a uuid. */
@@ -176,7 +125,7 @@ export async function submitCandidate(fd: FormData): Promise<IntakeResult> {
     const candidateId = candidate.id;
 
     if (photo) {
-      const photoDocId = await uploadDocument(admin, {
+      const photoDocId = await uploadDocument({
         f: photo,
         bucket: "candidate-photos",
         kind: "candidate_photo",
@@ -190,7 +139,7 @@ export async function submitCandidate(fd: FormData): Promise<IntakeResult> {
     }
 
     if (resume) {
-      await uploadDocument(admin, {
+      await uploadDocument({
         f: resume,
         bucket: "resumes",
         kind: "resume",
@@ -326,7 +275,7 @@ export async function submitEmployer(fd: FormData): Promise<IntakeResult> {
 
     // 4. Optional JD document
     if (jd) {
-      const jdDocId = await uploadDocument(admin, {
+      const jdDocId = await uploadDocument({
         f: jd,
         bucket: "job-descriptions",
         kind: "job_description",
