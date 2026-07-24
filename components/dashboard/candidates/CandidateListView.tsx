@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, Search, Users } from "lucide-react";
+import { LayoutGrid, List, Search, Users, Briefcase, MapPin, ArrowUpRight } from "lucide-react";
 import type { CandidateListItem } from "@/lib/db/candidates";
 import { cn } from "@/lib/utils";
 import { CandidateStatusBadge, CANDIDATE_STATUSES } from "@/components/dashboard/StatusBadge";
@@ -167,42 +167,64 @@ export function CandidateListView({
           </p>
         </div>
       ) : view === "grid" ? (
-        /* ── CARD / GRID VIEW (social-style, photo-forward) ── */
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        /* ── CARD / GRID VIEW (social-profile style) ── */
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((c) => (
             <Link
               key={c.id}
               href={`/dashboard/candidates/${c.id}`}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-white text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
+              className="group flex flex-col rounded-[26px] border border-border/70 bg-white p-2.5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
             >
-              {/* Mini cover band */}
-              <div className="h-16 bg-gradient-to-r from-primary via-primary/85 to-secondary" />
-              <div className="flex flex-col items-center px-6 pb-6">
-                <div className="-mt-12">
-                  <div className="rounded-full border-4 border-white bg-white shadow-sm">
-                    <CandidateAvatar item={c} size="lg" />
+              {/* Large photo panel */}
+              <div className="relative aspect-square w-full overflow-hidden rounded-[20px] bg-muted">
+                {c.photoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={c.photoUrl}
+                    alt={c.full_name}
+                    className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <div className="flex size-full items-center justify-center bg-gradient-to-br from-primary/80 to-secondary text-5xl font-bold text-white">
+                    {initials(c.full_name)}
                   </div>
+                )}
+                {/* Status pill overlaid on the photo */}
+                <div className="absolute left-3 top-3">
+                  <CandidateStatusBadge status={c.status} className="bg-white/95 shadow-sm backdrop-blur" />
                 </div>
-                <h3 className="mt-3 line-clamp-1 font-display text-base font-bold text-foreground group-hover:text-primary">
-                  {c.full_name}
-                </h3>
-                <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
-                  {c.current_title || c.target_role || "—"}
+              </div>
+
+              {/* Info */}
+              <div className="px-3 pb-3 pt-4">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="line-clamp-1 font-display text-lg font-bold tracking-tight text-foreground">
+                    {c.full_name}
+                  </h3>
+                </div>
+                <p className="mt-1 line-clamp-2 text-sm leading-snug text-muted-foreground">
+                  {c.current_title || c.target_role || "Candidate"}
+                  {c.primary_skills ? ` · ${c.primary_skills}` : ""}
                 </p>
-                <div className="mt-3">
-                  <CandidateStatusBadge status={c.status} />
-                </div>
-                <div className="mt-4 flex flex-wrap justify-center gap-1.5">
-                  {c.total_experience && (
-                    <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-foreground/70">
-                      {c.total_experience}
-                    </span>
-                  )}
-                  {c.location && (
-                    <span className="line-clamp-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-foreground/70">
-                      {c.location}
-                    </span>
-                  )}
+
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-xs font-medium text-foreground/70">
+                    {c.total_experience && (
+                      <span className="flex items-center gap-1.5">
+                        <Briefcase className="size-3.5 text-muted-foreground" />
+                        {c.total_experience}
+                      </span>
+                    )}
+                    {c.location && (
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="size-3.5 text-muted-foreground" />
+                        <span className="line-clamp-1">{c.location}</span>
+                      </span>
+                    )}
+                  </div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-foreground px-3.5 py-1.5 text-xs font-semibold text-background transition-colors group-hover:bg-primary">
+                    View <ArrowUpRight className="size-3.5" />
+                  </span>
                 </div>
               </div>
             </Link>
