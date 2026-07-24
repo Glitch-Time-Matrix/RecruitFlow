@@ -32,6 +32,32 @@ function toList(value: string | null | undefined): string[] {
     .filter(Boolean);
 }
 
+/**
+ * Split a free-text description into bullet points. Honors explicit newlines or
+ * leading bullet characters; otherwise falls back to sentence-splitting so a
+ * paragraph still renders as scannable, ATS-friendly bullets.
+ */
+function toBullets(value: string | null | undefined): string[] {
+  if (!value) return [];
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+
+  // Explicit line breaks or bullet markers → one bullet per line.
+  if (/[\n\r]/.test(trimmed) || /^[•\-*]/m.test(trimmed)) {
+    return trimmed
+      .split(/[\n\r]+/)
+      .map((l) => l.replace(/^[\s•\-*]+/, "").trim())
+      .filter(Boolean);
+  }
+
+  // Single paragraph → split into sentences (keeps each as its own bullet).
+  const sentences = trimmed
+    .split(/(?<=[.!?])\s+(?=[A-Z0-9])/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return sentences.length > 1 ? sentences : [trimmed];
+}
+
 /** Format a YYYY-MM-DD date as "Mon YYYY"; empty string on null. */
 function monthYear(date: string | null): string {
   if (!date) return "";
@@ -47,13 +73,34 @@ function dateRange(start: string | null, end: string | null, isCurrent: boolean)
   return esc([from, to].filter(Boolean).join(" – "));
 }
 
+/** Derive a concise fallback professional summary from the profile fields. */
+function fallbackSummary(c: Candidate): string {
+  const bits: string[] = [];
+  const role = c.current_title || c.target_role;
+  const exp = c.total_experience ? `${c.total_experience} of experience` : "";
+  if (role && exp) bits.push(`${role} with ${exp}`);
+  else if (role) bits.push(role);
+  else if (exp) bits.push(`Professional with ${exp}`);
+
+  const skills = toList(c.primary_skills).slice(0, 4);
+  if (skills.length) bits.push(`skilled in ${skills.join(", ")}`);
+  if (c.preferred_industry) bits.push(`focused on the ${c.preferred_industry} sector`);
+
+  if (bits.length === 0) return "";
+  const sentence = bits.join(", ").replace(/^./, (m) => m.toUpperCase());
+  return sentence.endsWith(".") ? sentence : sentence + ".";
+}
+
 /**
- * Renders a candidate's structured record into a fully self-contained, A4
- * print-optimized HTML résumé document (inline CSS, no external assets). The
- * result is stored as a `generated_resume` document and can be previewed or
- * printed to PDF from the browser. The layout intentionally omits the candidate's
- * personal contact block's private fields when absent, and carries agency branding
- * so a recruiter can present it to a client.
+ * Renders a candidate's record into a fully self-contained, A4 print-optimized
+ * HTML résumé (inline CSS, no external assets). The layout follows 2026
+ * best practice for ATS-parseable, recruiter-ready résumés: a single linear
+ * column, standard section headings ("Professional Summary", "Experience",
+ * "Education", "Skills"), reverse-chronological experience with achievement
+ * bullets, and a clean scannable contact line. Agency branding sits in the
+ * footer so a recruiter can present it to a client. All candidate data is
+ * HTML-escaped. Missing structured data falls back to the flat profile fields
+ * so the résumé is never empty.
  */
 export function renderResumeHtml(data: ResumeData): string {
   const c = data.candidate;
@@ -62,85 +109,105 @@ export function renderResumeHtml(data: ResumeData): string {
   const secondarySkills = toList(c.secondary_skills);
   const certifications = toList(c.certifications);
 
-  const subtitle = [c.current_title, c.current_employer].filter(Boolean).join(" · ");
+  const roleLine = [c.current_title, c.current_employer].filter(Boolean).join(" · ");
 
   const contactBits = [
-    c.email ? `<span>${esc(c.email)}</span>` : "",
-    c.phone ? `<span>${esc(c.phone)}</span>` : "",
-    c.location ? `<span>${esc(c.location)}</span>` : "",
-    c.linkedin_url ? `<span>${esc(c.linkedin_url)}</span>` : "",
+    c.email ? esc(c.email) : "",
+    c.phone ? esc(c.phone) : "",
+    c.location ? esc(c.location) : "",
+    c.linkedin_url ? esc(c.linkedin_url) : "",
   ]
     .filter(Boolean)
-    .join('<span class="dot">•</span>');
+    .join('<span class="sep">|</span>');
 
-  // Experience: prefer structured rows; otherwise fall back to the free-text
-  // "current role" summary so the résumé is never empty.
-  const experienceRows =
+  const summary = (c.professional_summary && c.professional_summary.trim())
+    ? c.professional_summary.trim()
+    : fallbackSummary(c);
+
+  // ── Experience ──────────────────────────────────────────────────────────
+  const experienceItems: {
+    title: string;
+    company: string;
+    range: string;
+    bullets: string[];
+  }[] =
     data.experience.length > 0
-      ? data.experience
+      ? data.experience.map((e) => ({
+          title: e.title || "Role",
+          company: e.company || "",
+          range: dateRange(e.start_date, e.end_date, e.is_current),
+          bullets: toBullets(e.description),
+        }))
+      : c.current_title || c.current_employer
+        ? [
+            {
+              title: c.current_title || "Current Role",
+              company: c.current_employer || "",
+              range: c.total_experience ? `${esc(c.total_experience)} total` : "",
+              bullets: [],
+            },
+          ]
+        : [];
+
+  const experienceHtml =
+    experienceItems.length > 0
+      ? experienceItems
           .map(
             (e) => `
-        <div class="item">
-          <div class="item-head">
-            <div>
-              <div class="item-title">${esc(e.title) || "Role"}</div>
-              <div class="item-sub">${esc(e.company)}</div>
-            </div>
-            <div class="item-meta">${dateRange(e.start_date, e.end_date, e.is_current)}</div>
+        <div class="entry">
+          <div class="entry-head">
+            <div class="entry-role">${esc(e.title)}</div>
+            <div class="entry-dates">${e.range}</div>
           </div>
-          ${e.description ? `<p class="item-desc">${esc(e.description)}</p>` : ""}
+          ${e.company ? `<div class="entry-org">${esc(e.company)}</div>` : ""}
+          ${
+            e.bullets.length
+              ? `<ul class="bullets">${e.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>`
+              : ""
+          }
         </div>`,
           )
           .join("")
-      : c.current_title || c.current_employer
-        ? `
-        <div class="item">
-          <div class="item-head">
-            <div>
-              <div class="item-title">${esc(c.current_title) || "Current Role"}</div>
-              <div class="item-sub">${esc(c.current_employer)}</div>
-            </div>
-            <div class="item-meta">${esc(c.total_experience) ? esc(c.total_experience) + " total" : ""}</div>
-          </div>
-        </div>`
-        : `<p class="empty">Experience details to be provided.</p>`;
+      : `<p class="muted">Experience details to be provided.</p>`;
 
-  // Education: structured rows, else the flat candidate fields.
-  const educationRows =
+  // ── Education ───────────────────────────────────────────────────────────
+  const educationItems =
     data.education.length > 0
-      ? data.education
+      ? data.education.map((ed) => ({
+          degree:
+            (ed.degree || "Qualification") + (ed.field_of_study ? `, ${ed.field_of_study}` : ""),
+          institution: ed.institution || "",
+          year: ed.graduation_year || "",
+        }))
+      : c.highest_degree || c.university
+        ? [
+            {
+              degree:
+                (c.highest_degree || "Qualification") +
+                (c.field_of_study ? `, ${c.field_of_study}` : ""),
+              institution: c.university || "",
+              year: c.graduation_year || "",
+            },
+          ]
+        : [];
+
+  const educationHtml =
+    educationItems.length > 0
+      ? educationItems
           .map(
             (ed) => `
-        <div class="item">
-          <div class="item-head">
-            <div>
-              <div class="item-title">${esc(ed.degree) || "Qualification"}${
-                ed.field_of_study ? `, ${esc(ed.field_of_study)}` : ""
-              }</div>
-              <div class="item-sub">${esc(ed.institution)}</div>
-            </div>
-            <div class="item-meta">${esc(ed.graduation_year)}</div>
+        <div class="entry">
+          <div class="entry-head">
+            <div class="entry-role">${esc(ed.degree)}</div>
+            <div class="entry-dates">${esc(ed.year)}</div>
           </div>
+          ${ed.institution ? `<div class="entry-org">${esc(ed.institution)}</div>` : ""}
         </div>`,
           )
           .join("")
-      : c.highest_degree || c.university
-        ? `
-        <div class="item">
-          <div class="item-head">
-            <div>
-              <div class="item-title">${esc(c.highest_degree) || "Qualification"}${
-                c.field_of_study ? `, ${esc(c.field_of_study)}` : ""
-              }</div>
-              <div class="item-sub">${esc(c.university)}</div>
-            </div>
-            <div class="item-meta">${esc(c.graduation_year)}</div>
-          </div>
-        </div>`
-        : `<p class="empty">Education details to be provided.</p>`;
+      : `<p class="muted">Education details to be provided.</p>`;
 
-  const chips = (items: string[]) =>
-    items.map((s) => `<span class="chip">${esc(s)}</span>`).join("");
+  const skillLine = (items: string[]) => items.map((s) => esc(s)).join("  ·  ");
 
   const generatedOn = new Date().toLocaleDateString("en-US", {
     year: "numeric",
@@ -156,161 +223,140 @@ export function renderResumeHtml(data: ResumeData): string {
 <title>${esc(c.full_name)} — Résumé</title>
 <style>
   :root {
-    --ink: #1a2332;
-    --muted: #5b6b82;
-    --line: #e2e8f0;
-    --brand: #1e3a5f;
-    --accent: #c9a227;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --rule: #d1d5db;
+    --accent: #1e3a5f;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body {
-    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-family: "Calibri", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     color: var(--ink);
-    background: #f1f5f9;
-    line-height: 1.5;
-    font-size: 13px;
+    background: #eef1f4;
+    line-height: 1.42;
+    font-size: 10.8pt;
   }
   .sheet {
-    max-width: 820px;
-    margin: 24px auto;
+    max-width: 8.27in;
+    margin: 20px auto;
     background: #fff;
-    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.12);
-    border-radius: 4px;
-    overflow: hidden;
+    padding: 0.7in 0.75in 0.55in;
+    box-shadow: 0 3px 20px rgba(15, 23, 42, 0.12);
   }
-  .band {
-    background: var(--brand);
-    color: #fff;
-    padding: 28px 40px;
-    border-bottom: 4px solid var(--accent);
+
+  /* Header */
+  header { text-align: center; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+  .name {
+    font-size: 23pt;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    text-transform: uppercase;
   }
-  .name { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
-  .subtitle { margin-top: 4px; font-size: 14px; color: #cbd5e1; }
-  .contact {
-    margin-top: 14px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 4px;
-    font-size: 11.5px;
-    color: #e2e8f0;
-    align-items: center;
-  }
-  .contact .dot { opacity: 0.5; padding: 0 4px; }
-  .body { padding: 28px 40px 36px; }
-  .section { margin-bottom: 22px; }
-  .section:last-child { margin-bottom: 0; }
-  .section-title {
-    font-size: 12px;
+  .role-line { margin-top: 3px; font-size: 11.5pt; color: var(--ink); font-weight: 600; }
+  .contact { margin-top: 7px; font-size: 9.6pt; color: var(--muted); }
+  .contact .sep { padding: 0 7px; color: var(--rule); }
+
+  /* Sections */
+  section { margin-top: 15px; }
+  h2 {
+    font-size: 11pt;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--brand);
-    padding-bottom: 6px;
-    margin-bottom: 12px;
-    border-bottom: 2px solid var(--line);
+    letter-spacing: 0.09em;
+    color: var(--accent);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 3px;
+    margin-bottom: 8px;
   }
-  .item { margin-bottom: 14px; break-inside: avoid; }
-  .item:last-child { margin-bottom: 0; }
-  .item-head { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
-  .item-title { font-weight: 600; font-size: 13.5px; }
-  .item-sub { color: var(--muted); font-size: 12.5px; }
-  .item-meta { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
-  .item-desc { margin-top: 4px; font-size: 12.5px; color: #334155; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
-  .kv-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
-  .kv-value { font-size: 13px; margin-top: 1px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip {
-    background: #eef2f7;
-    color: #27364a;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 3px 10px;
-    font-size: 11.5px;
-  }
-  .subhead { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 0 6px; }
-  .empty { color: var(--muted); font-style: italic; font-size: 12.5px; }
-  .footer {
-    margin-top: 26px;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
+  .summary { font-size: 10.6pt; color: #374151; text-align: justify; }
+
+  .entry { margin-bottom: 11px; break-inside: avoid; }
+  .entry:last-child { margin-bottom: 0; }
+  .entry-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+  .entry-role { font-weight: 700; font-size: 11pt; color: var(--ink); }
+  .entry-dates { font-size: 9.6pt; color: var(--muted); white-space: nowrap; font-style: italic; }
+  .entry-org { font-size: 10.4pt; font-weight: 600; color: #374151; margin-top: 1px; }
+  .bullets { margin: 5px 0 0 17px; }
+  .bullets li { margin-bottom: 2.5px; font-size: 10.3pt; color: #374151; }
+
+  .skills-group { margin-bottom: 6px; }
+  .skills-group:last-child { margin-bottom: 0; }
+  .skills-label { font-weight: 700; color: var(--ink); font-size: 10.2pt; }
+  .skills-line { color: #374151; font-size: 10.2pt; }
+
+  .muted { color: var(--muted); font-style: italic; }
+
+  footer {
+    margin-top: 20px;
+    padding-top: 9px;
+    border-top: 1px solid var(--rule);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 10.5px;
+    font-size: 8.4pt;
     color: var(--muted);
   }
-  .footer .brand { font-weight: 700; color: var(--brand); letter-spacing: 0.03em; }
+  footer .brand { font-weight: 700; color: var(--accent); letter-spacing: 0.04em; }
+
   @media print {
-    body { background: #fff; font-size: 12px; }
-    .sheet { box-shadow: none; margin: 0; max-width: none; border-radius: 0; }
-    .band { padding: 24px 32px; }
-    .body { padding: 24px 32px; }
+    body { background: #fff; }
+    .sheet { box-shadow: none; margin: 0; max-width: none; padding: 0; }
   }
-  @page { margin: 12mm; }
+  @page { size: A4; margin: 14mm 15mm; }
 </style>
 </head>
 <body>
   <div class="sheet">
-    <div class="band">
+    <header>
       <div class="name">${esc(c.full_name)}</div>
-      ${subtitle ? `<div class="subtitle">${esc(subtitle)}</div>` : ""}
+      ${roleLine ? `<div class="role-line">${esc(roleLine)}</div>` : ""}
       ${contactBits ? `<div class="contact">${contactBits}</div>` : ""}
-    </div>
-    <div class="body">
-      ${
-        c.total_experience || c.notice_period || c.target_role || c.work_preference
-          ? `
-      <div class="section">
-        <div class="section-title">Profile</div>
-        <div class="grid">
-          ${c.total_experience ? `<div><div class="kv-label">Total Experience</div><div class="kv-value">${esc(c.total_experience)}</div></div>` : ""}
-          ${c.target_role ? `<div><div class="kv-label">Target Role</div><div class="kv-value">${esc(c.target_role)}</div></div>` : ""}
-          ${c.preferred_industry ? `<div><div class="kv-label">Preferred Industry</div><div class="kv-value">${esc(c.preferred_industry)}</div></div>` : ""}
-          ${c.work_preference ? `<div><div class="kv-label">Work Preference</div><div class="kv-value">${esc(c.work_preference)}</div></div>` : ""}
-          ${c.notice_period ? `<div><div class="kv-label">Notice Period</div><div class="kv-value">${esc(c.notice_period)}</div></div>` : ""}
-        </div>
-      </div>`
-          : ""
-      }
+    </header>
 
-      <div class="section">
-        <div class="section-title">Experience</div>
-        ${experienceRows}
-      </div>
+    ${
+      summary
+        ? `<section>
+      <h2>Professional Summary</h2>
+      <p class="summary">${esc(summary)}</p>
+    </section>`
+        : ""
+    }
 
-      <div class="section">
-        <div class="section-title">Education</div>
-        ${educationRows}
-      </div>
+    <section>
+      <h2>Experience</h2>
+      ${experienceHtml}
+    </section>
 
-      ${
-        primarySkills.length || secondarySkills.length
-          ? `
-      <div class="section">
-        <div class="section-title">Skills</div>
-        ${primarySkills.length ? `<div class="subhead">Core</div><div class="chips">${chips(primarySkills)}</div>` : ""}
-        ${secondarySkills.length ? `<div class="subhead">Additional</div><div class="chips">${chips(secondarySkills)}</div>` : ""}
-      </div>`
-          : ""
-      }
+    <section>
+      <h2>Education</h2>
+      ${educationHtml}
+    </section>
 
-      ${
-        certifications.length
-          ? `
-      <div class="section">
-        <div class="section-title">Certifications</div>
-        <div class="chips">${chips(certifications)}</div>
-      </div>`
-          : ""
-      }
+    ${
+      primarySkills.length || secondarySkills.length
+        ? `<section>
+      <h2>Skills</h2>
+      ${primarySkills.length ? `<div class="skills-group"><span class="skills-label">Core: </span><span class="skills-line">${skillLine(primarySkills)}</span></div>` : ""}
+      ${secondarySkills.length ? `<div class="skills-group"><span class="skills-label">Additional: </span><span class="skills-line">${skillLine(secondarySkills)}</span></div>` : ""}
+    </section>`
+        : ""
+    }
 
-      <div class="footer">
-        <span>Prepared and represented by <span class="brand">${esc(BRAND.name)}</span></span>
-        <span>Generated ${esc(generatedOn)}</span>
-      </div>
-    </div>
+    ${
+      certifications.length
+        ? `<section>
+      <h2>Certifications</h2>
+      <div class="skills-line">${skillLine(certifications)}</div>
+    </section>`
+        : ""
+    }
+
+    <footer>
+      <span>Represented by <span class="brand">${esc(BRAND.name)}</span></span>
+      <span>${esc(generatedOn)}</span>
+    </footer>
   </div>
 </body>
 </html>`;

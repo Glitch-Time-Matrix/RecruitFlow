@@ -45,6 +45,7 @@ export const candidateIntakeSchema = z.object({
 export const candidateManageSchema = candidateIntakeSchema
   .omit({ declarationConsent: true })
   .extend({
+    professionalSummary: z.string().trim().max(4000).optional().or(z.literal("")),
     status: z
       .enum([
         "new",

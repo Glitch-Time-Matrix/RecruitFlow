@@ -146,6 +146,18 @@ export function CandidateForm({
         </F>
       </Section>
 
+      <Section title="Résumé & Summary">
+        <F id="professionalSummary" label="Professional summary" full>
+          <Textarea
+            id="professionalSummary"
+            name="professionalSummary"
+            defaultValue={v("professional_summary")}
+            rows={4}
+            placeholder="2-4 sentence pitch — headline achievements and value. Shown at the top of the generated résumé. Leave blank to auto-generate from the profile."
+          />
+        </F>
+      </Section>
+
       <Section title="Skills & Credentials">
         <F id="primarySkills" label="Primary skills" required full>
           <Textarea id="primarySkills" name="primarySkills" defaultValue={v("primary_skills")} required rows={2} placeholder="Comma-separated" />

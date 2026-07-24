@@ -153,8 +153,8 @@ export function DocumentManager({
             <p className="text-xs font-semibold text-foreground">Agency Résumé</p>
             <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
               {generated
-                ? "A branded résumé has been generated from this profile."
-                : "Generate a branded, client-ready résumé from this candidate's profile."}
+                ? "Built from this profile. Add a summary, experience & education, then regenerate to refresh it."
+                : "Add a professional summary, experience & education to the profile, then generate a branded, ATS-ready résumé."}
             </p>
           </div>
         </div>

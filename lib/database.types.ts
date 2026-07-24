@@ -295,6 +295,7 @@ export type Database = {
           photo_document_id: string | null
           preferred_industry: string | null
           primary_skills: string | null
+          professional_summary: string | null
           search_vector: unknown
           secondary_skills: string | null
           source: Database["public"]["Enums"]["record_source"]
@@ -327,6 +328,7 @@ export type Database = {
           photo_document_id?: string | null
           preferred_industry?: string | null
           primary_skills?: string | null
+          professional_summary?: string | null
           search_vector?: unknown
           secondary_skills?: string | null
           source?: Database["public"]["Enums"]["record_source"]
@@ -359,6 +361,7 @@ export type Database = {
           photo_document_id?: string | null
           preferred_industry?: string | null
           primary_skills?: string | null
+          professional_summary?: string | null
           search_vector?: unknown
           secondary_skills?: string | null
           source?: Database["public"]["Enums"]["record_source"]

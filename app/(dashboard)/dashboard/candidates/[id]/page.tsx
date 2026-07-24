@@ -135,6 +135,17 @@ export default async function CandidateDetailPage({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main column */}
         <div className="space-y-6 lg:col-span-2">
+          {candidate.professional_summary?.trim() && (
+            <section className="rounded-2xl border border-border bg-white p-6 shadow-sm">
+              <h2 className="mb-3 flex items-center gap-2 font-display text-sm font-bold text-foreground">
+                <Award className="size-4 text-secondary" /> Professional Summary
+              </h2>
+              <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+                {candidate.professional_summary}
+              </p>
+            </section>
+          )}
+
           <section className="rounded-2xl border border-border bg-white p-6 shadow-sm">
             <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-bold text-foreground">
               <Briefcase className="size-4 text-secondary" /> Professional Details
