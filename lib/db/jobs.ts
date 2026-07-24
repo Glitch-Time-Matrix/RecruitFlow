@@ -40,6 +40,7 @@ function toPublicJob(row: JobRow): Job {
 /** Public: all published jobs (stateless anon client → cacheable). */
 export async function listPublishedJobs(): Promise<(Job & { slug: string })[]> {
   const supabase = createPublicClient();
+  if (!supabase) return []; // env absent (e.g. build step) → render on demand later
   const { data } = await supabase
     .from("jobs")
     .select("*")
@@ -54,6 +55,7 @@ export async function getPublishedJobBySlug(
   slug: string,
 ): Promise<(Job & { slug: string }) | null> {
   const supabase = createPublicClient();
+  if (!supabase) return null;
   const { data } = await supabase
     .from("jobs")
     .select("*")
@@ -67,6 +69,7 @@ export async function getPublishedJobBySlug(
 /** Public: slugs of all published jobs (for static params). */
 export async function listPublishedJobSlugs(): Promise<string[]> {
   const supabase = createPublicClient();
+  if (!supabase) return []; // build with no env → pre-render nothing; ISR fills in
   const { data } = await supabase.from("jobs").select("slug").eq("is_published", true).limit(500);
   return (data ?? []).map((r) => r.slug);
 }

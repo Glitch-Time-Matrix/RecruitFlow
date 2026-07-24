@@ -17,3 +17,6 @@ next-env.d.ts
 
 # Vercel
 .vercel
+
+# Local agent skill packs (not part of the app)
+.agents/
