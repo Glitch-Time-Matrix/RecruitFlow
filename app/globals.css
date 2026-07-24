@@ -20,6 +20,43 @@
   --color-brand-emerald: #16A34A;
   --color-brand-teal: #0EA5E9;
   --color-brand-slate: #0369A1;
+
+  /*
+   * ── shadcn/ui semantic tokens (dashboard only) ──────────────────────────
+   * Mapped onto the SAME brand palette above so the dashboard feels like one
+   * product with the public site, not a bolted-on admin theme. The public
+   * site never references these — only components/ui/* (shadcn) does.
+   */
+  --radius: 0.65rem;
+  --color-card: #FFFFFF;
+  --color-card-foreground: var(--color-foreground);
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: var(--color-foreground);
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary-foreground: #FFFFFF;
+  --color-muted-foreground: #64748B;      /* Slate 500 */
+  --color-accent-foreground: #FFFFFF;
+  --color-destructive: #DC2626;           /* Red 600 */
+  --color-destructive-foreground: #FFFFFF;
+  --color-input: var(--color-border);
+  --color-ring: var(--color-secondary);
+
+  /* Sidebar (dashboard shell) */
+  --color-sidebar: var(--color-primary);
+  --color-sidebar-foreground: #E2E8F0;
+  --color-sidebar-primary: var(--color-accent);
+  --color-sidebar-primary-foreground: #FFFFFF;
+  --color-sidebar-accent: #1E293B;        /* Slate 800 */
+  --color-sidebar-accent-foreground: #FFFFFF;
+  --color-sidebar-border: #1E293B;
+  --color-sidebar-ring: var(--color-accent);
+
+  /* Status colors used across candidate/employer pipelines */
+  --color-status-new: #64748B;
+  --color-status-info: #0369A1;
+  --color-status-success: #16A34A;
+  --color-status-warning: #D97706;
+  --color-status-danger: #DC2626;
 }
 
 @layer base {

@@ -108,13 +108,14 @@ export default function Footer() {
       {/* Footer bottom bar */}
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-foreground/60 font-light">
         <p>© {new Date().getFullYear()} {BRAND.legalName}. All rights reserved.</p>
-        <div className="flex gap-4">
-          {BRAND.assurances.map((item, i) => (
-            <React.Fragment key={item}>
-              {i > 0 && <span>·</span>}
-              <span className="text-foreground/60">{item}</span>
-            </React.Fragment>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {BRAND.assurances.map((item) => (
+            <span key={item} className="text-foreground/60">{item}</span>
           ))}
+          <span className="text-foreground/30">·</span>
+          <Link href="/login" className="text-foreground/50 hover:text-primary hover:underline">
+            Staff Login
+          </Link>
         </div>
       </div>
     </footer>

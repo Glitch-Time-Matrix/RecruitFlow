@@ -43,11 +43,22 @@ export async function updateSession(request: NextRequest) {
   );
 
   // IMPORTANT: refreshing the session must happen here (do not remove).
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // Phase 4: add `/dashboard` protection here, e.g.
-  //   const { data: { user } } = await supabase.auth.getUser();
-  //   if (!user && request.nextUrl.pathname.startsWith("/dashboard")) redirect to /login
+  const { pathname } = request.nextUrl;
+
+  // Guard the dashboard: no session → login. (Active-profile + role checks happen
+  // in the dashboard layout and RLS.) We intentionally do NOT redirect /login →
+  // /dashboard here — the login page does that only for ACTIVE users, which
+  // avoids a loop for authenticated-but-inactive accounts.
+  if (pathname.startsWith("/dashboard") && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
+  }
 
   return supabaseResponse;
 }
