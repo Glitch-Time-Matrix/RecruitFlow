@@ -111,6 +111,47 @@ export async function getCandidate(id: string): Promise<CandidateDetail | null> 
   return { ...candidate, photoUrl, documents: withUrls };
 }
 
+/**
+ * Fetch everything needed to render a candidate's generated résumé: the core
+ * record plus any structured experience/education rows (RLS-scoped). Returns
+ * null if the candidate isn't found or accessible.
+ */
+export async function getResumeData(id: string): Promise<{
+  candidate: CandidateRow;
+  experience: Database["public"]["Tables"]["candidate_experience"]["Row"][];
+  education: Database["public"]["Tables"]["candidate_education"]["Row"][];
+} | null> {
+  const supabase = await createClient();
+
+  const { data: candidate } = await supabase
+    .from("candidates")
+    .select("*")
+    .eq("id", id)
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (!candidate) return null;
+
+  const [{ data: experience }, { data: education }] = await Promise.all([
+    supabase
+      .from("candidate_experience")
+      .select("*")
+      .eq("candidate_id", id)
+      .order("is_current", { ascending: false })
+      .order("start_date", { ascending: false, nullsFirst: false }),
+    supabase
+      .from("candidate_education")
+      .select("*")
+      .eq("candidate_id", id)
+      .order("graduation_year", { ascending: false, nullsFirst: false }),
+  ]);
+
+  return {
+    candidate,
+    experience: experience ?? [],
+    education: education ?? [],
+  };
+}
+
 /** Distinct preferred industries present in the accessible candidate set (for filters). */
 export async function listCandidateIndustries(): Promise<string[]> {
   const supabase = await createClient();

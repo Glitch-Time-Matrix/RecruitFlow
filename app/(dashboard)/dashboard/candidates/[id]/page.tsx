@@ -9,13 +9,12 @@ import {
   Briefcase,
   GraduationCap,
   Award,
-  FileText,
-  Download,
   Clock,
   DollarSign,
 } from "lucide-react";
 import { getCandidate } from "@/lib/db/candidates";
 import { CandidateStatusBadge } from "@/components/dashboard/StatusBadge";
+import { DocumentManager } from "@/components/dashboard/candidates/DocumentManager";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const metadata = { title: "Candidate" };
@@ -34,14 +33,6 @@ function Field({ label, value }: { label: string; value?: string | null }) {
   );
 }
 
-const DOC_LABELS: Record<string, string> = {
-  resume: "Résumé",
-  candidate_photo: "Profile Photo",
-  generated_resume: "Generated Résumé",
-  certificate: "Certificate",
-  other: "Document",
-};
-
 export default async function CandidateDetailPage({
   params,
 }: {
@@ -51,7 +42,15 @@ export default async function CandidateDetailPage({
   const candidate = await getCandidate(id);
   if (!candidate) notFound();
 
-  const files = candidate.documents.filter((d) => d.kind !== "candidate_photo");
+  const managedDocs = candidate.documents
+    .filter((d) => d.kind !== "candidate_photo")
+    .map((d) => ({
+      id: d.id,
+      kind: d.kind,
+      file_name: d.file_name,
+      url: d.url,
+      created_at: d.created_at,
+    }));
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
@@ -180,38 +179,7 @@ export default async function CandidateDetailPage({
             </dl>
           </section>
 
-          <section className="rounded-2xl border border-border bg-white p-6 shadow-sm">
-            <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-bold text-foreground">
-              <FileText className="size-4 text-secondary" /> Documents
-            </h2>
-            {files.length === 0 ? (
-              <p className="text-xs text-muted-foreground">No documents uploaded.</p>
-            ) : (
-              <ul className="space-y-2">
-                {files.map((doc) => (
-                  <li key={doc.id}>
-                    <a
-                      href={doc.url ?? "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 rounded-lg border border-border p-3 transition-colors hover:border-primary/30 hover:bg-muted/40"
-                    >
-                      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                        <FileText className="size-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="line-clamp-1 text-xs font-semibold text-foreground">
-                          {DOC_LABELS[doc.kind] ?? "Document"}
-                        </p>
-                        <p className="line-clamp-1 text-[11px] text-muted-foreground">{doc.file_name}</p>
-                      </div>
-                      <Download className="size-4 shrink-0 text-muted-foreground" />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+          <DocumentManager candidateId={candidate.id} documents={managedDocs} />
         </div>
       </div>
     </div>
