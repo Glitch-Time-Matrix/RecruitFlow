@@ -99,7 +99,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ slug
             </p>
           </div>
           <Link
-            href={`/candidates?role=${encodeURIComponent(job.title)}`}
+            href={`/candidates?role=${encodeURIComponent(job.title)}&job=${job.id}`}
             className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-md transition-transform hover:scale-105"
           >
             Apply Now <ArrowUpRight className="size-4" />

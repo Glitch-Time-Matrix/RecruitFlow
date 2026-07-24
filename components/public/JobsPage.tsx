@@ -15,8 +15,10 @@ interface JobsPageProps {
 
 export default function JobsPage({ jobs }: JobsPageProps) {
   const router = useRouter();
-  const onApplyForJob = (jobTitle: string) =>
-    router.push(`/candidates?role=${encodeURIComponent(jobTitle)}`);
+  const onApplyForJob = (jobTitle: string, jobId?: string) =>
+    router.push(
+      `/candidates?role=${encodeURIComponent(jobTitle)}${jobId ? `&job=${jobId}` : ""}`,
+    );
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("All Departments");
@@ -217,7 +219,7 @@ export default function JobsPage({ jobs }: JobsPageProps) {
                   View Job Details
                 </button>
                 <button
-                  onClick={() => onApplyForJob(job.title)}
+                  onClick={() => onApplyForJob(job.title, job.id)}
                   className="px-4 py-2.5 rounded-xl bg-primary text-white font-semibold text-xs shadow-md hover:bg-primary/90 transition-colors flex items-center justify-center gap-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >
                   Apply
@@ -289,8 +291,9 @@ export default function JobsPage({ jobs }: JobsPageProps) {
                 <button
                   onClick={() => {
                     const title = selectedJobModal.title;
+                    const jid = selectedJobModal.id;
                     setSelectedJobModal(null);
-                    onApplyForJob(title);
+                    onApplyForJob(title, jid);
                   }}
                   className="px-6 py-2.5 rounded-xl bg-primary text-white font-bold text-xs shadow-md hover:bg-primary/90 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >

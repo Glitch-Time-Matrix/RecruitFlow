@@ -8,7 +8,8 @@ import CandidatesPage from "@/components/public/CandidatesPage";
 function CandidatesInner() {
   const params = useSearchParams();
   const role = params.get("role") ?? "";
-  return <CandidatesPage prefilledJobTitle={role} />;
+  const jobId = params.get("job") ?? "";
+  return <CandidatesPage prefilledJobTitle={role} jobId={jobId} />;
 }
 
 export default function Page() {

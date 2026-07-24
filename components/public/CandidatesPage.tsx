@@ -10,9 +10,10 @@ gsap.registerPlugin(useGSAP);
 
 interface CandidatesPageProps {
   prefilledJobTitle?: string;
+  jobId?: string;
 }
 
-export default function CandidatesPage({ prefilledJobTitle }: CandidatesPageProps) {
+export default function CandidatesPage({ prefilledJobTitle, jobId }: CandidatesPageProps) {
   const [activeTab, setActiveTab] = useState<"register" | "ai_align">("register");
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -80,7 +81,7 @@ export default function CandidatesPage({ prefilledJobTitle }: CandidatesPageProp
         {/* Content Display */}
         <div className="cand-content">
           {activeTab === "register" ? (
-            <CandidateRegistrationForm prefilledJobTitle={prefilledJobTitle} />
+            <CandidateRegistrationForm prefilledJobTitle={prefilledJobTitle} jobId={jobId} />
           ) : (
             <div className="space-y-6">
             <div className="p-4 rounded-2xl bg-muted border border-border text-xs text-foreground/70 shadow-sm">

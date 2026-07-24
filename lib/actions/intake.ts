@@ -199,6 +199,27 @@ export async function submitCandidate(fd: FormData): Promise<IntakeResult> {
       });
     }
 
+    // If the candidate applied from a specific job listing, create the linked
+    // application (candidate -> job -> employer) automatically.
+    const jobId = str(fd, "jobId");
+    if (jobId && /^[0-9a-f-]{36}$/i.test(jobId)) {
+      const { data: job } = await admin
+        .from("jobs")
+        .select("id, employer_id")
+        .eq("id", jobId)
+        .eq("is_published", true)
+        .maybeSingle();
+      if (job) {
+        await admin.from("applications").insert({
+          candidate_id: candidateId,
+          job_id: job.id,
+          employer_id: job.employer_id,
+          stage: "applied",
+          source: "web",
+        });
+      }
+    }
+
     return {
       success: true,
       reference: ref("CAND", candidateId),

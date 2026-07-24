@@ -6,10 +6,11 @@ import { submitCandidate } from "@/lib/actions/intake";
 
 interface CandidateRegistrationFormProps {
   prefilledJobTitle?: string;
+  jobId?: string;
   onSuccess?: () => void;
 }
 
-export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess }: CandidateRegistrationFormProps) {
+export default function CandidateRegistrationForm({ prefilledJobTitle, jobId, onSuccess }: CandidateRegistrationFormProps) {
   const [formData, setFormData] = useState<CandidateRegistration>({
     fullName: "",
     email: "",
@@ -114,6 +115,7 @@ export default function CandidateRegistrationForm({ prefilledJobTitle, onSuccess
       fd.append("declarationConsent", declarationConsent ? "true" : "");
       if (resumeFile) fd.append("resume", resumeFile);
       if (photoFile) fd.append("photo", photoFile);
+      if (jobId) fd.append("jobId", jobId);
       fd.append("company_website", honeypot);
 
       const result = await submitCandidate(fd);
