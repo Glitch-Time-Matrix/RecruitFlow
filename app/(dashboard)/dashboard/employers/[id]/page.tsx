@@ -13,10 +13,12 @@ import {
   Download,
   Clock,
   ShieldCheck,
+  Pencil,
 } from "lucide-react";
 import { getEmployer } from "@/lib/db/employers";
 import { EmployerStatusBadge, HiringStatusBadge } from "@/components/dashboard/StatusBadge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 export const metadata = { title: "Employer" };
 
@@ -65,11 +67,18 @@ export default async function EmployerDetailPage({
           </AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
-              {employer.company_name}
-            </h1>
-            <EmployerStatusBadge status={employer.status} />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+                {employer.company_name}
+              </h1>
+              <EmployerStatusBadge status={employer.status} />
+            </div>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/dashboard/employers/${employer.id}/edit`}>
+                <Pencil /> Edit
+              </Link>
+            </Button>
           </div>
           <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-foreground/70">
             {employer.industry && (
