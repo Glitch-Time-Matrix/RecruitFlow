@@ -4,16 +4,20 @@ import { Search, MapPin, DollarSign, Briefcase, Filter, Sparkles, Building2, Clo
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { INITIAL_JOBS } from "@/lib/data";
+import { useRouter } from "next/navigation";
 import { Job } from "@/lib/types";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 interface JobsPageProps {
-  onApplyForJob: (jobTitle: string) => void;
+  jobs: Job[];
 }
 
-export default function JobsPage({ onApplyForJob }: JobsPageProps) {
+export default function JobsPage({ jobs }: JobsPageProps) {
+  const router = useRouter();
+  const onApplyForJob = (jobTitle: string) =>
+    router.push(`/candidates?role=${encodeURIComponent(jobTitle)}`);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState<string>("All Departments");
   const [selectedType, setSelectedType] = useState<string>("All Types");
@@ -21,14 +25,14 @@ export default function JobsPage({ onApplyForJob }: JobsPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const departmentsList = useMemo(() => {
-    const list = Array.from(new Set(INITIAL_JOBS.map((p) => p.department)));
+    const list = Array.from(new Set(jobs.map((p) => p.department).filter(Boolean)));
     return ["All Departments", ...list];
-  }, []);
+  }, [jobs]);
 
   const typesList = ["All Types", "Full-Time", "Contract Staffing", "Executive Search"];
 
   const filteredJobs = useMemo(() => {
-    return INITIAL_JOBS.filter((job) => {
+    return jobs.filter((job) => {
       const matchesSearch =
         job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,7 +43,7 @@ export default function JobsPage({ onApplyForJob }: JobsPageProps) {
 
       return matchesSearch && matchesDept && matchesType;
     });
-  }, [searchTerm, selectedDepartment, selectedType]);
+  }, [jobs, searchTerm, selectedDepartment, selectedType]);
 
   useGSAP(() => {
     // Header reveal
